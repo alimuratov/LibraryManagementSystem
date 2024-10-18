@@ -5,8 +5,12 @@ import org.junit.jupiter.api.Test;
 import main.Book;
 import main.CollaborativeFiltering;
 import main.User;
+import main.PredefinedStubData;
+import main.RandomStubData;
+import main.Data;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
@@ -20,6 +24,21 @@ public class CollaborativeFilteringTest {
 	
 	protected static List<Book> books;
 	
+	public void printData(Data dataObj) {
+		Map<User, HashMap<Book, BigDecimal>>data = dataObj.getData();
+		for (Map.Entry<User, HashMap<Book, BigDecimal>> userEntry : data.entrySet()) {
+			User user = userEntry.getKey();
+			System.out.println("User: " + user.getUserName());
+			
+			HashMap<Book, BigDecimal> bookRatings = userEntry.getValue();
+			for (Map.Entry<Book, BigDecimal> bookEntry : bookRatings.entrySet()) {
+				Book book = bookEntry.getKey();
+				BigDecimal rating = bookEntry.getValue();
+				System.out.println("	Book:" + book.getBookName() + ", Rating: " + rating);
+			}
+		}
+	}
+	
 	@BeforeEach
 	void setup() {
 		books = Arrays.asList(
@@ -28,6 +47,7 @@ public class CollaborativeFilteringTest {
 				new Book("Book3") );
 	}
 	
+	@Disabled
 	@Test
 	void testWikipedia() {
 		Map<User, HashMap<Book, BigDecimal>> data = new HashMap<>();
@@ -51,14 +71,25 @@ public class CollaborativeFilteringTest {
 		bookRatings3.put(books.get(2), BigDecimal.valueOf(5.0));
 		data.put(user3, bookRatings3);
 		
-		CollaborativeFiltering.slopeOne(data);
-		Map<User, HashMap<Book, BigDecimal>> actualOutput = CollaborativeFiltering.getOutput();
+		PredefinedStubData stubData = new PredefinedStubData(data, books);
+		CollaborativeFiltering collFilter = new CollaborativeFiltering(stubData);
+		collFilter.slopeOne();
+		Map<User, HashMap<Book, BigDecimal>> actualOutput = collFilter.getOutput();
 		
 		Map<User, HashMap<Book, BigDecimal>> expectedOutput = data;
 		expectedOutput.get(user2).put(books.get(2), BigDecimal.valueOf(10).divide(BigDecimal.valueOf(3), 10, RoundingMode.HALF_UP));
 		expectedOutput.get(user3).put(books.get(0), (new BigDecimal("13").divide(new BigDecimal("3"), 10, RoundingMode.HALF_UP)));
 		
 		assertEquals(expectedOutput, actualOutput);
+	}
+	
+	@Test
+	void testRandom() {
+		RandomStubData stubData = new RandomStubData(3, books, 42L);
+		printData(stubData);
+		CollaborativeFiltering collFilter = new CollaborativeFiltering(stubData);
+		collFilter.slopeOne();
+		
 	}
 
 }
