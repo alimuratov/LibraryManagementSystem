@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import main.user.User;
+
 import java.math.BigDecimal;
 
 public class Data {
