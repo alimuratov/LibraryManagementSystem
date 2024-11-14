@@ -11,6 +11,20 @@ import org.junit.jupiter.api.Test;
 import book.Review;
 
 class TestReview {
+	PrintStream oldPrintStream;
+    ByteArrayOutputStream bos;
+    
+    private void setOutput() throws Exception {
+        oldPrintStream = System.out;
+        bos = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(bos));
+    }
+
+    private String getOutput() {
+        System.setOut(oldPrintStream);
+        return bos.toString();
+    }
+    
 	@Test
 	public void testReview_01() {
 		Review review1 = new Review("Great world-building, worth the read.", 5);
@@ -21,7 +35,6 @@ class TestReview {
 	public void testReview_02() {
 		Review review1 = new Review("Great world-building, worth the read.", 5);
 		assertEquals(5, review1.getBookRating());
-		
 	}
 	
 	@Test
@@ -33,12 +46,9 @@ class TestReview {
 	
 	@Test
 	public void testReview_04() throws Exception{
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	    System.setOut(new PrintStream(outputStream));
+		setOutput();
 		Review review1 = new Review("Great world-building, worth the read.", 10);
-		String consoleOutput = outputStream.toString();
-	    System.setOut(System.out);
-		assertEquals("Rating should be 0 to 8", consoleOutput);
+		assertEquals("Rating should be 0 to 8", getOutput());
 	}
 
 }
