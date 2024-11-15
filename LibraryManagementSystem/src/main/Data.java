@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import main.user.User;
+import main.users.User;
 
 import java.math.BigDecimal;
 

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import main.user.User;
+import main.users.User;
 
 public class CollaborativeFiltering {
 	private static Map<Book, Map<Book, BigDecimal>> bookSimilarities = new HashMap<>();

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import main.Book;
 import main.CollaborativeFiltering;
-import main.user.User;
+import main.users.User;
 
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;

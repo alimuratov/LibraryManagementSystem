@@ -1,4 +1,4 @@
-package main.user;
+package main.users;
 
 import main.book.Book;
 import java.time.LocalDate;

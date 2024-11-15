@@ -1,4 +1,4 @@
-package main.user;
+package main.users;
 
 public class Membership {
     
