@@ -32,7 +32,7 @@ class TestBook {
 	void testBook_01() throws Exception {
 		//Add rental book copy, expected result: "Add one rental copy of book\n"
 		setOutput();
-		Book book = new Book("045141943X", "Les Miserables", "Victor Hugo", 250);
+		Book book = new Book("978-0-06-112008-4","To Kill a Mockingbird","Harper Lee","J.B. Lippincott & Co.","1960-07-11", 250);
 		RentalBookCopy copy1 = new RentalBookCopy(book);
 		book.addRentalCopy(copy1);
 		assertEquals("Add one rentable copy of book\n", getOutput());
@@ -42,7 +42,7 @@ class TestBook {
 	void testBook_02() throws Exception {
 		//Add salable book copy, expected result: "Add one salable copy of book\n"
 		setOutput();
-		Book book = new Book("045141943X", "Les Miserables", "Victor Hugo", 250);
+		Book book = new Book("978-0-06-112008-4","To Kill a Mockingbird","Harper Lee","J.B. Lippincott & Co.","1960-07-11", 250);
 		SalableBookCopy copy2 = new SalableBookCopy(book);
 		book.addSaleableCopy(copy2);
 		assertEquals("Add one seleable copy of book\n", getOutput());
@@ -50,9 +50,9 @@ class TestBook {
 	
 	@Test
 	void testBook_03() throws Exception{
-		//Lend a book, expected result: "Lending Successfully for book Les Miserables \n"
+		//Lend a book, expected result: "Lending Successfully for book To Kill a Mockingbird \n"
 		setOutput();
-		Book book = new Book("045141943X", "Les Miserables", "Victor Hugo", 250);
+		Book book = new Book("978-0-06-112008-4","To Kill a Mockingbird","Harper Lee","J.B. Lippincott & Co.","1960-07-11", 250);
 		Customer_stub customer = new Customer_stub();
 		book.addRentalCopy(new RentalBookCopy(book));
 		getOutput();
@@ -63,9 +63,9 @@ class TestBook {
 	
 	@Test
 	void testBook_04() throws Exception {
-		//buy a book, expected result: "Buying Successfully for book Les Miserables \n"
+		//buy a book, expected result: "Buying Successfully for book To Kill a Mockingbird \n"
 		setOutput();
-		Book book = new Book("045141943X", "Les Miserables", "Victor Hugo", 250);
+		Book book = new Book("978-0-06-112008-4","To Kill a Mockingbird","Harper Lee","J.B. Lippincott & Co.","1960-07-11", 250);
 		Customer_stub customer = new Customer_stub();
 		book.addSaleableCopy(new SalableBookCopy(book));
 		getOutput();
@@ -77,9 +77,9 @@ class TestBook {
 	
 	@Test
 	void testBook_05() throws Exception {
-		//lend a book when these is no rental copy of that book, expected result: "Buying Successfully for book Les Miserables \n"
+		//lend a book when these is no rental copy of that book, expected result: "Buying Successfully for book To Kill a Mockingbird \n"
 		setOutput();
-		Book book = new Book("045141943X", "Les Miserables", "Victor Hugo", 250);
+		Book book = new Book("978-0-06-112008-4","To Kill a Mockingbird","Harper Lee","J.B. Lippincott & Co.","1960-07-11", 250);
 		Customer_stub customer = new Customer_stub();
 		book.Lend(customer);
 		assertEquals("No book available for lending.\n", getOutput());
@@ -89,9 +89,9 @@ class TestBook {
 	
 	@Test
 	void testBook_06() throws Exception {
-		//Buy a book when these is no salable copy of that book, expected result: "Buying Successfully for book Les Miserables \n"
+		//Buy a book when these is no salable copy of that book, expected result: "Buying Successfully for book To Kill a Mockingbird \n"
 		setOutput();
-		Book book = new Book("045141943X", "Les Miserables", "Victor Hugo", 250);
+		Book book = new Book("978-0-06-112008-4","To Kill a Mockingbird","Harper Lee","J.B. Lippincott & Co.","1960-07-11", 250);
 		Customer_stub customer = new Customer_stub();
 		book.Lend(customer);
 		assertEquals("No book available for lending.\n", getOutput());
@@ -100,9 +100,9 @@ class TestBook {
 	
 	@Test
 	void testBook_07() throws Exception {
-		//lend a book when these is no rental copy of that book, expected result: "Buying Successfully for book Les Miserables \n"
+		//lend a book when these is no rental copy of that book, expected result: "Buying Successfully for book To Kill a Mockingbird \n"
 		setOutput();
-		Book book = new Book("045141943X", "Les Miserables", "Victor Hugo", 250);
+		Book book = new Book("978-0-06-112008-4","To Kill a Mockingbird","Harper Lee","J.B. Lippincott & Co.","1960-07-11", 250);
 		Customer_stub customer = new Customer_stub();
 		book.Buy(customer);
 		assertEquals("No book available for selling.\n", getOutput());
