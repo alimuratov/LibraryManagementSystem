@@ -8,6 +8,8 @@ public class Book {
 	private String isbn;
     private String title;
     private String author;
+    private String publisher; 
+    private String publicationDate; 
     private int bookPrice;
     private List<RentalBookCopy> rentalCopies; 
     private List<SalableBookCopy> saleCopies; 
@@ -16,10 +18,12 @@ public class Book {
     private ArrayList<SalableBookCopy> soldCopies;
     private List<Review> allReviews;
 
-    public Book(String isbn, String title, String author, int Price) {
+    public Book(String isbn, String title, String author, String publisher, String publicationDate, int Price) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
+        this.publisher = publisher;
+        this.publicationDate = publicationDate;
         this.bookPrice = Price;
         this.rentalCopies = new ArrayList<>();
         this.saleCopies = new ArrayList<>();
@@ -133,6 +137,6 @@ public class Book {
     }
     
 	public String getDisplayText() {
-		return title + " by " + author + " ISBN: " + isbn;
+		return title + " by " + author + " ISBN: " + isbn + " Publisher: " + publisher + " Publication Date: " + publicationDate + " Price: " + bookPrice;
 	}
 }
