@@ -2,11 +2,13 @@ package main;
 
 public class Book {
 	private String bookName;
+	private String bookDescription;
 	
 	public Book() { }
 	
-	public Book(String bookName) {
+	public Book(String bookName, String bookDescription) {
 		this.bookName = bookName;
+		this.bookDescription = bookDescription;
 	}
 	
 	public String getBookName() {
@@ -35,5 +37,13 @@ public class Book {
 	@Override
 	public int hashCode() {
 		return bookName.hashCode();
+	}
+
+	public String getBookDescription() {
+		return bookDescription;
+	}
+
+	public void setBookDescription(String bookDescription) {
+		this.bookDescription = bookDescription;
 	}
 }

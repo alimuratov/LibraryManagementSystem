@@ -1,7 +1,10 @@
 package main;
 
+import java.util.Map;
+
 public class User {
 	private String userName;
+	private Map<String, Double> profileVector;
 
 	public User() { }
 
@@ -9,6 +12,14 @@ public class User {
 		this.userName = userName;
 	}
 
+	public void setProfileVector(Map<String, Double> profileVector) {
+		this.profileVector = profileVector;
+	}
+	
+	public Map<String, Double>  getProfileVector() {
+		return this.profileVector;
+	}
+	
 	public String getUserName() {
 		return userName;
 	}
