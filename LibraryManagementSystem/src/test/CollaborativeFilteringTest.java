@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import main.book.Book;
 import main.CollaborativeFiltering;
 import main.users.User;
+import main.kocka.Password;
 
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,20 +33,20 @@ public class CollaborativeFilteringTest {
 	void testWikipedia() {
 		Map<User, HashMap<Book, BigDecimal>> data = new HashMap<>();
 		
-		User user1 = new User("John");
+		User user1 = new User("John", new Password("JohnPassword"));
 		HashMap<Book, BigDecimal> bookRatings1 = new HashMap<>();
 		bookRatings1.put(books.get(0), BigDecimal.valueOf(5.0));
 		bookRatings1.put(books.get(1), BigDecimal.valueOf(3.0));
 		bookRatings1.put(books.get(2), BigDecimal.valueOf(2.0));
 		data.put(user1, bookRatings1);
 		
-		User user2 = new User("Mark");
+		User user2 = new User("Mark", new Password("MarkPassword"));
 		HashMap<Book, BigDecimal> bookRatings2 = new HashMap<>();
 		bookRatings2.put(books.get(0), BigDecimal.valueOf(3.0));
 		bookRatings2.put(books.get(1), BigDecimal.valueOf(4.0));
 		data.put(user2, bookRatings2);
 		
-		User user3 = new User("Lucy");
+		User user3 = new User("Lucy", new Password("LucyPassword"));
 		HashMap<Book, BigDecimal> bookRatings3 = new HashMap<>();
 		bookRatings3.put(books.get(1), BigDecimal.valueOf(2.0));
 		bookRatings3.put(books.get(2), BigDecimal.valueOf(5.0));
