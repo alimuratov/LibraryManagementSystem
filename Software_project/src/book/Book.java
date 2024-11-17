@@ -10,6 +10,7 @@ public class Book {
     private String author;
     private String publisher; 
     private String publicationDate; 
+    private String bookDescription;
     private int bookPrice;
     private List<RentalBookCopy> rentalCopies; 
     private List<SalableBookCopy> saleCopies; 
@@ -18,12 +19,13 @@ public class Book {
     private ArrayList<SalableBookCopy> soldCopies;
     private List<Review> allReviews;
 
-    public Book(String isbn, String title, String author, String publisher, String publicationDate, int Price) {
+    public Book(String isbn, String title, String author, String publisher, String publicationDate,String bookDescription, int Price) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.publicationDate = publicationDate;
+        this.bookDescription = bookDescription;
         this.bookPrice = Price;
         this.rentalCopies = new ArrayList<>();
         this.saleCopies = new ArrayList<>();
