@@ -2,7 +2,7 @@ package test;
 
 import org.junit.jupiter.api.Test;
 
-import main.Book;
+import main.book.Book;
 import main.CollaborativeFiltering;
 import main.users.User;
 
@@ -23,9 +23,9 @@ public class CollaborativeFilteringTest {
 	@BeforeEach
 	void setup() {
 		books = Arrays.asList(
-				new Book("Book1"),
-				new Book("Book2"), 
-				new Book("Book3") );
+				new Book("Book1", "description1"),
+				new Book("Book2", "description2"), 
+				new Book("Book3", "description3") );
 	}
 	
 	@Test

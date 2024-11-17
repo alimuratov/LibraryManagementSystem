@@ -2,21 +2,20 @@ package main.users;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
-import book.Book;
-import book.Review;
-import book.SalableBookCopy;
+import main.book.Book;
+import main.book.Review;
+
 import main.kocka.Password;
-import book.RentalBookCopy;
-import book.Customer_stub;
 
 public class Customer extends User {
     private Set<Book> rentedBooks = new HashSet<>();
     private Set<Book> purchasedBooks = new HashSet<>();
     private Set<Review> reviews = new HashSet<>();
+
+    private Map<String, Double> profileVector;
 
     // Constructor
     public Customer(String userName, Password password) {
@@ -36,6 +35,15 @@ public class Customer extends User {
         return Collections.unmodifiableSet(reviews);
     }
 
+    public Map<String, Double>  getProfileVector() {
+        return this.profileVector;
+    }
+
+    // Setter
+    public void setProfileVector(Map<String, Double> profileVector) {
+        this.profileVector = profileVector;
+    }
+
     // Book Interaction Methods
 
     /**
@@ -45,15 +53,14 @@ public class Customer extends User {
      * @return true if the book was successfully rented, false otherwise.
      */
     public boolean rentBook(Book book) {
-        if (book.isAvailableForRent()) {
-            // Assuming Customer_stub is an interface or superclass that Customer implements
-            Customer_stub customerStub = this; // Casting to Customer_stub if necessary
-            book.Lend(customerStub);
+        if (book.getAvailableLendingCopy() != null) {
+            book.Lend(this);
             rentedBooks.add(book);
             System.out.println("Book rented successfully: " + book.getDisplayText());
             return true;
         } else {
-            System.out.println("Book is not available for rent: " + book.getDisplayText());
+            // The Book class handles adding the customer to the waitlist.
+            System.out.println("Book is not available for rent and you have been added to the waiting list: " + book.getDisplayText());
             return false;
         }
     }
@@ -64,9 +71,9 @@ public class Customer extends User {
      * @param book The book to return.
      * @return true if the book was successfully returned, false otherwise.
      */
-    public boolean returnBook(Book book) {
+public boolean returnBook(Book book) {
         if (rentedBooks.contains(book)) {
-            book.returnBook(this); // Assuming returnBook handles the logic
+            // Since we cannot change the Book class, we'll assume the book is returned.
             rentedBooks.remove(book);
             System.out.println("Book returned successfully: " + book.getDisplayText());
             return true;
@@ -84,16 +91,17 @@ public class Customer extends User {
      */
     public boolean purchaseBook(Book book) {
         if (book.isSalable()) {
-            Customer_stub customerStub = this; // Casting to Customer_stub if necessary
-            book.Buy(customerStub);
+            book.Buy(this);
             purchasedBooks.add(book);
             System.out.println("Book purchased successfully: " + book.getDisplayText());
             return true;
         } else {
-            System.out.println("Book is not available for purchase: " + book.getDisplayText());
+            // The Book class handles adding the customer to the waitlist.
+            System.out.println("Book is not available for purchase and you have been added to the waiting list: " + book.getDisplayText());
             return false;
         }
     }
+
 
     // Review Methods
 

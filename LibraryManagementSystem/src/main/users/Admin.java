@@ -3,15 +3,18 @@ package main.users;
 import java.util.ArrayList;
 import java.util.List;
 
-import book.Book;
-import book.Review;
+import main.book.Book;
+import main.book.RentalBookCopy;
+import main.book.Review;
+import main.book.SalableBookCopy;
+import main.kocka.Password;
 
 public class Admin extends User {
     private List<Book> managedBooks = new ArrayList<>();
 
     // Constructor
-    public Admin(String userID, String userName, String password) {
-        super(userID, userName, password);
+    public Admin(String userName, Password password) {
+        super(userName, password);
     }
 
     /**
@@ -54,21 +57,47 @@ public class Admin extends User {
      * @param book      The book to update.
      * @param newTitle  The new title of the book.
      * @param newAuthor The new author of the book.
-     * @param isSalable Updated salability status.
-     * @param isRentable Updated rentability status.
      * @return true if the book was successfully updated, false otherwise.
      */
-    public boolean updateBookDetails(Book book, String newTitle, String newAuthor, boolean isSalable, boolean isRentable) {
+    public boolean updateBookDetails(Book book, String newTitle, String newAuthor) {
         if (managedBooks.contains(book)) {
             book.setTitle(newTitle);
             book.setAuthor(newAuthor);
-            book.setSaleable(isSalable);
-            book.setAvailableForRent(isRentable);
             System.out.println("Book details updated: " + book.getDisplayText());
             return true;
         } else {
             System.out.println("Book not found in the library: " + book.getDisplayText());
             return false;
+        }
+    }
+
+    /**
+     * Adds a rental copy to a book.
+     *
+     * @param book The book to which the rental copy will be added.
+     * @param copy The rental copy to add.
+     */
+    public void addRentalCopy(Book book, RentalBookCopy copy) {
+        if (managedBooks.contains(book)) {
+            book.addRentalCopy(copy);
+            System.out.println("Rental copy added to book: " + book.getDisplayText());
+        } else {
+            System.out.println("Book not managed by admin: " + book.getDisplayText());
+        }
+    }
+
+    /**
+     * Adds a saleable copy to a book.
+     *
+     * @param book The book to which the saleable copy will be added.
+     * @param copy The saleable copy to add.
+     */
+    public void addSaleableCopy(Book book, SalableBookCopy copy) {
+        if (managedBooks.contains(book)) {
+            book.addSaleableCopy(copy);
+            System.out.println("Saleable copy added to book: " + book.getDisplayText());
+        } else {
+            System.out.println("Book not managed by admin: " + book.getDisplayText());
         }
     }
 
@@ -82,7 +111,7 @@ public class Admin extends User {
         }
         System.out.println("Managed Books:");
         for (Book book : managedBooks) {
-            System.out.println(book);
+            System.out.println(book.getDisplayText());
         }
     }
 
@@ -96,7 +125,7 @@ public class Admin extends User {
             System.out.println("Book not managed by admin: " + book.getDisplayText());
             return;
         }
-        System.out.println("Reviews for " + book.getTitle() + ":");
+        System.out.println("Reviews for " + book.getDisplayText() + ":");
         book.displayReviews();
     }
 

@@ -8,22 +8,25 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import main.book.Book;
+import main.kocka.Password;
 import main.users.User;
 
 import java.math.BigDecimal;
 
 public class Data {
 	protected static List<Book> books = Arrays.asList(
-											new Book("Book1"),
-											new Book("Book2"), 
-											new Book("Book3") );
+											new Book("Book1", "description1"),
+											new Book("Book2", "description2"), 
+											new Book("Book3", "description3") );
 	
 	public static Map<User, HashMap<Book, BigDecimal>> initializeData(int numOfUsers) {
 		Map<User, HashMap<Book, BigDecimal>> data = new HashMap<>();
 	    Random rand = new Random();
 	    int booksToRate = Math.min(4, books.size());
 		for (int i = 0; i < numOfUsers; i++) {
-			User user = new User("User" + i);
+			Password password = new Password("password" + i);
+			User user = new User("User" + i, password);
 			HashMap<Book, BigDecimal> bookRatings = new HashMap<>();
 			Set<Book> ratedBooks = new HashSet<>();
 			while (ratedBooks.size() < booksToRate) {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import main.book.Book;
 import main.users.User;
 
 public class CollaborativeFiltering {

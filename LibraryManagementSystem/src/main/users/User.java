@@ -1,8 +1,8 @@
 package main.users;
 
-import main.kocka.Password;
-
 import java.util.UUID;
+
+import main.kocka.Password;
 
 public class User {
     private final String userID;
@@ -30,6 +30,14 @@ public class User {
     }
 
     @Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof User)) return false;
+		User other = (User) obj;
+		return userID.equals(other.userID);
+	}
+
+    @Override
     public int hashCode() {
         return userID.hashCode();
     }
@@ -39,4 +47,5 @@ public class User {
     public String toString() {
         return "User [userID=" + userID + ", userName=" + userName + "]";
     }
+
 }
