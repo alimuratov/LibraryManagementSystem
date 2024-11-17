@@ -1,6 +1,7 @@
 package main.users;
 
-import main.book.Book;
+import main.book.*;
+
 import java.time.LocalDate;
 
 public class Renting {
@@ -9,50 +10,42 @@ public class Renting {
     private LocalDate rentalDate;
     private LocalDate returnDate;
 
-    public Renting() { }
-
-    public Renting(Customer customer, Book book, LocalDate rentalDate, LocalDate returnDate) {
+    // Constructors
+    public Renting(Customer customer, Book book) {
         this.customer = customer;
         this.book = book;
-        this.rentalDate = rentalDate;
-        this.returnDate = returnDate;
+        this.rentalDate = LocalDate.now();
+        this.returnDate = rentalDate.plusDays(14); // Assuming a 2-week rental period
     }
 
-    public Customer getCustomer() {
-        return customer;
+    // Rent a book
+    public boolean rentBook() {
+        if (book.getAvailableLendingCopy() != null) {
+            book.Lend(customer);
+            customer.addRentedBook(book);
+            System.out.println("Book rented successfully: " + book.getDisplayText());
+            return true;
+        } else {
+            System.out.println("Book is not available for rent and you have been added to the waiting list: " + book.getDisplayText());
+            return false;
+        }
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-    
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    public LocalDate getRentalDate() {
-        return rentalDate;
-    }
-
-    public void setRentalDate(LocalDate rentalDate) {
-        this.rentalDate = rentalDate;
-    }
-
-    public LocalDate getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
+    // Return a rented book
+    public boolean returnBook() {
+        if (customer.getRentedBooks().contains(book)) {
+            customer.removeRentedBook(book);
+            System.out.println("Book returned successfully: " + book.getDisplayText());
+            return true;
+        } else {
+            System.out.println("This book is not in your rented list: " + book.getDisplayText());
+            return false;
+        }
     }
 
     @Override
     public String toString() {
-        return "Renting [customer=" + customer + ", book=" + book +
+        return "Renting [customer=" + customer.getUserName() + ", book=" + book.getDisplayText() +
                ", rentalDate=" + rentalDate + ", returnDate=" + returnDate + "]";
     }
 

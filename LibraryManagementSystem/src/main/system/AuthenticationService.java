@@ -1,15 +1,15 @@
-package main.kocka;
+package main.system;
 import java.util.ArrayList;
-import java.util.List;
 
-import main.users.Customer;
-import main.users.User;
+import main.users.*;
 
 public class AuthenticationService{
-    private static List<User> users;
+    private static ArrayList<User> users;
     private static SessionManagerStub session = SessionManagerStub.getInstance();
 
-    public AuthenticationService(){
+    public static AuthenticationService instance = new AuthenticationService();
+
+    private  AuthenticationService(){
         AuthenticationService.users = new ArrayList<User>();
     }
     
@@ -22,6 +22,10 @@ public class AuthenticationService{
         }
 
         return null;
+    }
+
+    public static AuthenticationService getInstance(){
+        return instance;
     }
 
     private static boolean checkPassword(User user, String parole){
@@ -39,12 +43,14 @@ public class AuthenticationService{
         return false;
     }
 
-    public static User login(String name, String parole){
+    public User login(String name, String parole){
         
         User user = findUserByName(name);
 
-        if(user == null)
+        if(user == null){
             System.out.println("No user found!");
+            return null;
+        }
 
         boolean correctPassword = checkPassword(user, parole);
 
@@ -56,7 +62,7 @@ public class AuthenticationService{
         return user;
     }
 
-    public static Boolean logout(User user){
+    public Boolean logout(User user){
         return session.removeSession(user);
     }
 
@@ -80,5 +86,9 @@ public class AuthenticationService{
         }
 
         return null;
+    }
+
+    public void addUser(User user){
+        users.add(user);
     }
 }

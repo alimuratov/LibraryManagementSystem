@@ -1,4 +1,4 @@
-package main.kocka;
+package main.system;
 
 public class Password { //this class is added because in the future we might implement something more
                         //sophisticated like activity log of user's passwords or similar

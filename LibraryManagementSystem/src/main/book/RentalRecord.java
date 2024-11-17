@@ -3,8 +3,7 @@ package main.book;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import main.users.Customer;
-import main.users.User;
+import main.users.*;
 
 public class RentalRecord {
     private final Customer customer; 

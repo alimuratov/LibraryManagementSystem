@@ -20,6 +20,7 @@ public class Book {
     private ArrayList<SalableBookCopy> soldCopies;
     private List<Review> allReviews;
 
+    // Constructor
     public Book(String isbn, String title, String author, String publisher, String publicationDate,String bookDescription, int Price) {
         this.isbn = isbn;
         this.title = title;
@@ -47,6 +48,7 @@ public class Book {
              0);
     }
 
+    // Setters
     public void setTitle(String title) {
         this.title = title;
     }
@@ -55,7 +57,14 @@ public class Book {
         this.author = author;
     }
 
+    // Getters
+    public String getBookTitle() {
+        return this.title;
+    }
 
+    public String getBookDescription() {
+        return this.bookDescription;
+    }
     
     //selling book
     public boolean isSalable() {

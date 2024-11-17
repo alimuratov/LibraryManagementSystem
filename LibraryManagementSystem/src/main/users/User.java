@@ -2,7 +2,7 @@ package main.users;
 
 import java.util.UUID;
 
-import main.kocka.Password;
+import main.system.Password;
 
 public class User {
     private final String userID;

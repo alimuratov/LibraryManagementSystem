@@ -5,10 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import main.book.Book;
-import main.book.Review;
-
-import main.kocka.Password;
+import main.book.*;
+import main.system.*;
 
 public class Customer extends User {
     private Set<Book> rentedBooks = new HashSet<>();
@@ -35,7 +33,7 @@ public class Customer extends User {
         return Collections.unmodifiableSet(reviews);
     }
 
-    public Map<String, Double>  getProfileVector() {
+    public Map<String, Double> getProfileVector() {
         return this.profileVector;
     }
 
@@ -44,73 +42,25 @@ public class Customer extends User {
         this.profileVector = profileVector;
     }
 
-    // Book Interaction Methods
-
-    /**
-     * Rents a book if it's available.
-     *
-     * @param book The book to rent.
-     * @return true if the book was successfully rented, false otherwise.
-     */
-    public boolean rentBook(Book book) {
-        if (book.getAvailableLendingCopy() != null) {
-            book.Lend(this);
-            rentedBooks.add(book);
-            System.out.println("Book rented successfully: " + book.getDisplayText());
-            return true;
-        } else {
-            // The Book class handles adding the customer to the waitlist.
-            System.out.println("Book is not available for rent and you have been added to the waiting list: " + book.getDisplayText());
-            return false;
-        }
+    // Methods to manage rented books
+    public void addRentedBook(Book book) {
+        rentedBooks.add(book);
     }
 
-    /**
-     * Returns a rented book.
-     *
-     * @param book The book to return.
-     * @return true if the book was successfully returned, false otherwise.
-     */
-public boolean returnBook(Book book) {
-        if (rentedBooks.contains(book)) {
-            // Since we cannot change the Book class, we'll assume the book is returned.
-            rentedBooks.remove(book);
-            System.out.println("Book returned successfully: " + book.getDisplayText());
-            return true;
-        } else {
-            System.out.println("This book is not in your rented list: " + book.getDisplayText());
-            return false;
-        }
+    public void removeRentedBook(Book book) {
+        rentedBooks.remove(book);
     }
 
-    /**
-     * Purchases a book if it's saleable.
-     *
-     * @param book The book to purchase.
-     * @return true if the book was successfully purchased, false otherwise.
-     */
-    public boolean purchaseBook(Book book) {
-        if (book.isSalable()) {
-            book.Buy(this);
-            purchasedBooks.add(book);
-            System.out.println("Book purchased successfully: " + book.getDisplayText());
-            return true;
-        } else {
-            // The Book class handles adding the customer to the waitlist.
-            System.out.println("Book is not available for purchase and you have been added to the waiting list: " + book.getDisplayText());
-            return false;
-        }
+    // Methods to manage purchased books (if needed)
+    public void addPurchasedBook(Book book) {
+        purchasedBooks.add(book);
     }
 
+    public void removePurchasedBook(Book book) {
+        purchasedBooks.remove(book);
+    }
 
     // Review Methods
-
-    /**
-     * Adds a review for a book.
-     *
-     * @param book   The book being reviewed.
-     * @param review The review content.
-     */
     public void addReview(Book book, Review review) {
         if (purchasedBooks.contains(book) || rentedBooks.contains(book)) {
             book.addReview(review);
@@ -121,6 +71,5 @@ public boolean returnBook(Book book) {
             throw new IllegalArgumentException("User has not rented or purchased this book.");
         }
     }
-
     // Additional methods will be added here
 }

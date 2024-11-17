@@ -3,11 +3,8 @@ package main.users;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.book.Book;
-import main.book.RentalBookCopy;
-import main.book.Review;
-import main.book.SalableBookCopy;
-import main.kocka.Password;
+import main.book.*;
+import main.system.Password;
 
 public class Admin extends User {
     private List<Book> managedBooks = new ArrayList<>();

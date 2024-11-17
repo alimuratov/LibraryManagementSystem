@@ -3,8 +3,7 @@ package main.book;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.users.Customer;
-import main.users.User;
+import main.users.*;
 
 public class RentalBookCopy extends BookCopy {
     private boolean isRented; 
