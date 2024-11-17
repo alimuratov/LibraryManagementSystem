@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import book.Book;
 import book.Review;
 import book.SalableBookCopy;
+import main.kocka.Password;
 import book.RentalBookCopy;
 import book.Customer_stub;
 
@@ -17,8 +19,8 @@ public class Customer extends User {
     private Set<Review> reviews = new HashSet<>();
 
     // Constructor
-    public Customer(String userID, String userName, String password) {
-        super(userID, userName, password);
+    public Customer(String userName, Password password) {
+        super(userName, password);
     }
 
     // Getters
