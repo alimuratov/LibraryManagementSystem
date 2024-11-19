@@ -3,15 +3,23 @@ package main.users;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.authentication.*;
 import main.book.*;
-import main.system.Password;
 
 public class Admin extends User {
+    private static Admin instance;
     private List<Book> managedBooks = new ArrayList<>();
 
     // Constructor
     public Admin(String userName, Password password) {
         super(userName, password);
+    }
+
+    public static synchronized Admin getInstance(String userName, Password password) {
+        if (instance == null) {
+            instance = new Admin(userName, password);
+        }
+        return instance;
     }
 
     /**

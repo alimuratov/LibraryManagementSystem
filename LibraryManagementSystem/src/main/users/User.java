@@ -2,9 +2,9 @@ package main.users;
 
 import java.util.UUID;
 
-import main.system.Password;
+import main.authentication.Password;
 
-public class User {
+public abstract class User {
     private final String userID;
     private final String userName;
     private Password password;

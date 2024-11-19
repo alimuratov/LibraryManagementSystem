@@ -5,10 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import main.authentication.*;
 import main.book.*;
-import main.system.*;
 
 public class Customer extends User {
+    private Membership membership;
     private Set<Book> rentedBooks = new HashSet<>();
     private Set<Book> purchasedBooks = new HashSet<>();
     private Set<Review> reviews = new HashSet<>();
@@ -16,11 +17,16 @@ public class Customer extends User {
     private Map<String, Double> profileVector;
 
     // Constructor
-    public Customer(String userName, Password password) {
+    public Customer(String userName, Password password, MembershipType membershipType) {
         super(userName, password);
+        this.membership = new Membership(membershipType);
     }
 
     // Getters
+    public Membership getMembership() {
+        return membership;
+    }
+
     public Set<Book> getRentedBooks() {
         return Collections.unmodifiableSet(rentedBooks);
     }
@@ -38,12 +44,20 @@ public class Customer extends User {
     }
 
     // Setter
+    public void setMembership(MembershipType membershipType) {
+        this.membership = new Membership(membershipType);
+    }
+    
     public void setProfileVector(Map<String, Double> profileVector) {
         this.profileVector = profileVector;
     }
 
     // Methods to manage rented books
     public void addRentedBook(Book book) {
+        if (rentedBooks.size() >= membership.getMaxRentBooks()) {
+            System.out.println("Reached maximum rented books limit for your membership level.");
+            throw new IllegalStateException("Cannot rent more books.");
+        }
         rentedBooks.add(book);
     }
 
@@ -58,6 +72,11 @@ public class Customer extends User {
 
     public void removePurchasedBook(Book book) {
         purchasedBooks.remove(book);
+    }
+
+    public double calculateDiscountedPrice(double originalPrice) {
+        double discount = membership.getPurchaseDiscount();
+        return originalPrice * (1 - discount);
     }
 
     // Review Methods

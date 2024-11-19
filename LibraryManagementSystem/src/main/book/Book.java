@@ -1,7 +1,10 @@
 package main.book;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import main.users.Customer;
 
@@ -15,10 +18,11 @@ public class Book {
     private int bookPrice;
     private List<RentalBookCopy> rentalCopies; 
     private List<SalableBookCopy> saleCopies; 
-    private ArrayList<Customer> rentingWaitList;
-    private ArrayList<Customer> sellingWaitList;
+    private Queue<Customer> rentingWaitList;
+    private Queue<Customer> sellingWaitList;
     private ArrayList<SalableBookCopy> soldCopies;
     private List<Review> allReviews;
+    private static ArrayList<Book> allBooks;
 
     // Constructor
     public Book(String isbn, String title, String author, String publisher, String publicationDate,String bookDescription, int Price) {
@@ -33,8 +37,12 @@ public class Book {
         this.rentalCopies = new ArrayList<>();
         this.saleCopies = new ArrayList<>();
         this.soldCopies = new ArrayList<>();
-        this.rentingWaitList = new ArrayList<>();
-        this.sellingWaitList = new ArrayList<>();
+        this.rentingWaitList = new PriorityQueue<>(
+                Comparator.comparingInt(c -> -c.getMembership().getWaitlistPriority())
+            );
+        this.sellingWaitList = new PriorityQueue<>(
+                Comparator.comparingInt(c -> -c.getMembership().getWaitlistPriority())
+            );
         this.allReviews = new ArrayList<>();
     }
 
@@ -47,6 +55,14 @@ public class Book {
              bookDescription, 
              0);
     }
+    
+    //Singleton
+    public static ArrayList<Book> getAllBooks() {
+        if (allBooks == null) {
+        	allBooks = new ArrayList<>();
+        }
+        return allBooks;
+    }
 
     // Setters
     public void setTitle(String title) {
@@ -56,6 +72,10 @@ public class Book {
     public void setAuthor(String author) {
         this.author = author;
     }
+    
+    public Queue<Customer> getSellingWaitList() {
+        return sellingWaitList;
+    }
 
     // Getters
     public String getBookTitle() {
@@ -64,6 +84,10 @@ public class Book {
 
     public String getBookDescription() {
         return this.bookDescription;
+    }
+    
+    public Queue<Customer> getRentingWaitList() {
+        return rentingWaitList;
     }
     
     //selling book
