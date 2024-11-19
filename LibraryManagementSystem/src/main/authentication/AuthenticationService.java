@@ -1,7 +1,7 @@
-package main.kocka;
+package main.authentication;
 import java.util.ArrayList;
 
-import main.users.Customer;
+import main.exceptions.*;
 import main.users.*;
 
 public class AuthenticationService{
@@ -27,7 +27,7 @@ public class AuthenticationService{
             }
     
             return null;
-        }
+    }
 
     public void addUser(User customer){
         users.add(customer);
@@ -62,20 +62,18 @@ public class AuthenticationService{
         return false;
     }
 
-    public User login(String name, String parole){
+    public User login(String name, String parole) throws ExNonExistingUsesrname, ExIncorrectPassword{
         
         User user = findUserByName(name);
 
         if(user == null){
-            System.out.println("No user found!");
-            return null;
+            throw new ExNonExistingUsesrname();
         }
 
         boolean correctPassword = checkPassword(user, parole);
 
         if(!correctPassword){
-            System.out.println("Password is not correct!");
-            return null;
+            throw new ExIncorrectPassword();
         }
 
         return user;
@@ -85,46 +83,40 @@ public class AuthenticationService{
         return sessionManager.removeSession(user);
     }
 
-    public User register(String name, String parole){
+    public User register(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
 
-        if(nameAlreadyExists(name)){
-            System.out.println("The username already exists!");
-            return null;
-        }
-
+        if(nameAlreadyExists(name))
+            throw new ExTakenUsername();
 
         Password password = new Password(parole);
         User user = new Customer(name, password);
-
-        Boolean goodPassword = Password.validPassword(password);
-
-        if(goodPassword){
-            User newUser = new User(name, password);
-            users.add(newUser);
-            return user;
+        
+        try{
+            Password.validPassword(password);
+        } catch (ExInvalidPassword e){
+            throw e;
         }
 
-        return null;
+        User newUser = new User(name, password);
+        users.add(newUser);
+        return user;
     }
 
-    public Customer registerCustomer(String name, String parole){
-        if(nameAlreadyExists(name)){
-            System.out.println("The username already exists!");
-            return null;
-        }
+    public Customer registerCustomer(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
+        if(nameAlreadyExists(name))
+            throw new ExTakenUsername();
 
         Password password = new Password(parole);
         Customer customer = new Customer(name, password);
 
-        Boolean goodPassword = Password.validPassword(password);
-
-        if(goodPassword){
-            users.add(customer);
-            return customer;
+        try{
+            Password.validPassword(password);
+        } catch (ExInvalidPassword e){
+            throw e;
         }
 
-        return null;
-
+        users.add(customer);
+        return customer;
     }
 
 }
