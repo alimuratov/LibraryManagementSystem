@@ -1,4 +1,4 @@
-package main.kocka;
+package main.authentication;
 import main.users.*;
 import java.util.UUID;
 
