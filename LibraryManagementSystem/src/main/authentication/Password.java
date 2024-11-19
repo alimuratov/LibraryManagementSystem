@@ -1,4 +1,6 @@
-package main.kocka;
+package main.authentication;
+
+import main.exceptions.ExInvalidPassword;
 
 public class Password { //this class is added because in the future we might implement something more
                         //sophisticated like activity log of user's passwords or similar
@@ -39,15 +41,16 @@ public class Password { //this class is added because in the future we might imp
         return false;
     }
 
-    public static boolean validPassword(Password password){
+    public static void validPassword(Password password) throws ExInvalidPassword{
         String parole = password.parole;
 
         if(length(password) < 6)
-            return false;
+            throw new ExInvalidPassword();
 
         boolean containsNumber = hasNumber(parole), containsUpper = hasUpper(parole), containsLower = hasLower(parole);
 
-        return containsNumber && containsUpper && containsLower;
+        if(!(containsNumber && containsUpper && containsLower))
+            throw new ExInvalidPassword(containsUpper, containsLower, containsNumber);
     }
 
     public boolean equals(Password password){
