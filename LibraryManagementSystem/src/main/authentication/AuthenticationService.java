@@ -82,7 +82,7 @@ public class AuthenticationService{
     public Boolean logout(User user){
         return sessionManager.removeSession(user);
     }
-
+/*
     public User register(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
 
         if(nameAlreadyExists(name))
@@ -101,7 +101,7 @@ public class AuthenticationService{
         users.add(newUser);
         return user;
     }
-
+*/
     public Customer registerCustomer(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
         if(nameAlreadyExists(name))
             throw new ExTakenUsername();
