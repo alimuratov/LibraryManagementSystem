@@ -19,6 +19,7 @@ public class ContentFiltering extends RecommendationStrategyBase {
 	private Set<String> corpus = new HashSet<>();
 	private Map<String, Integer> termDocumentFreq = new HashMap<>();
 	
+	/*
 	public static void printTfIdfDict(Map<String, Map<String, Double>> tfIdfDict) {
 	    for (Map.Entry<String, Map<String, Double>> outerEntry : tfIdfDict.entrySet()) {
 	        String key = outerEntry.getKey();
@@ -52,13 +53,14 @@ public class ContentFiltering extends RecommendationStrategyBase {
 			System.out.printf("  %s: %.4f%n", term, tfIdfVal);
 		}
 		System.out.println();
-	}
+	} 
+	*/
 		
 	public ContentFiltering(Data data) {
         super(data);
     }
 	
-	private void tfIdfPreprocessing() {
+	public void tfIdfPreprocessing() {
 		createTfIdfSeparately();
 		computeTfIdfVectors();
 	}
@@ -67,14 +69,28 @@ public class ContentFiltering extends RecommendationStrategyBase {
 		Map<Book, Double> bookSimilarities = new HashMap<>();
 		Map<String, Double> profileVector = user.getProfileVector();
 		
-		printProfileVector(profileVector);
+		// printProfileVector(profileVector);
 		
 		for (Book book : books) {
 			if (!data.isBookRatedByUser(book, user)) {
+				if (!tfIdfDict.containsKey(book.getBookName())) {
+					throw new BookNotFoundException("Book not found in TfIdfDict: " + book.getBookName());
+				}
+				
 				double similarity = cosineSimilarity(tfIdfDict.get(book.getBookName()), profileVector);
-				System.out.printf("Book: %s, Similarity with user profile: %f", book, similarity);
 				bookSimilarities.put(book, similarity);
+				
+				// System.out.printf("Book: %s, Similarity with user profile: %f", book, similarity);
+				// System.out.println();
 			}
+		}
+		
+		if (bookSimilarities.size() == 0) {
+			System.out.println("No recommendations available. You may have already rated all the books.");
+			return new Book[0]; 
+		} else if (bookSimilarities.size() < numberOfRecommendations) {
+			System.out.println("Requested number of recommendations exceeds the number of available books.");
+			numberOfRecommendations = bookSimilarities.size();
 		}
 		
 		Book[] recommendations = bookSimilarities.entrySet() 
@@ -93,13 +109,20 @@ public class ContentFiltering extends RecommendationStrategyBase {
 	
 	@Override
 	public Book[] getRecommendations(User user, int numberOfRecommendations) {	
+		if (numberOfRecommendations <= 0) {
+			System.out.println("Number of recommendations cannot be less than one.");
+			return new Book[0];
+		}
+		if (user == null) {
+			throw new NullPointerException("User cannot be null");
+		}
 		if (user.getProfileVector() == null) {
 			tfIdfPreprocessing();
 			Map<String, Double> profileVector = createUserProfile(user);
 			user.setProfileVector(profileVector);
 		}
 		
-		printTfIdfDict(tfIdfDict);
+		// printTfIdfDict(tfIdfDict);
 		
 		return getBooksSimilarToUserProfile(user, numberOfRecommendations);
 		
@@ -114,7 +137,17 @@ public class ContentFiltering extends RecommendationStrategyBase {
 			String cleanedBookDescription = bookDescription.replaceAll("[^\\w\\s]", "");
 			
 			// split descriptions into words
-			String[] terms = cleanedBookDescription.split("\\s+");
+			String[] rawTerms = cleanedBookDescription.split("\\s+");
+			
+			List<String> filteredTerms = new ArrayList<>();
+			
+			for (String term : rawTerms) {
+			    if (!term.isEmpty()) {
+			        filteredTerms.add(term.toLowerCase());
+			    }
+			}
+			
+			String[] terms = filteredTerms.toArray(new String[0]);
 			
 			int totalTermsInDoc = terms.length; 
 			
@@ -202,12 +235,18 @@ public class ContentFiltering extends RecommendationStrategyBase {
 		
 		Map<String, Double> userProfile = new HashMap<>();
 		
+		for (String term : corpus) {
+			userProfile.put(term, 0.0);
+		}
+		
 		for (String bookName : preferredBookNames) {
+			if (!tfIdfDict.containsKey(bookName)) {
+				throw new BookNotFoundException("Book not found in TfIdfDict: " + bookName);
+			}
 			Map<String, Double> tfIdfEntry = tfIdfDict.get(bookName);
 			
 			for (String term : tfIdfEntry.keySet()) {
-				double existingValue = userProfile.getOrDefault(term, 0.0);
-				userProfile.put(term, existingValue + tfIdfEntry.get(term));
+				userProfile.put(term, userProfile.get(term) + tfIdfEntry.get(term));
 			}
 		}
 		
@@ -237,20 +276,55 @@ public class ContentFiltering extends RecommendationStrategyBase {
 	
 	public Map<String, Double> normalizeVector(Map<String, Double> vector) {
 		double norm = 0.0;
+		
 		for (double value : vector.values()) {
+			if (value < 0) {
+				throw new IllegalArgumentException("TF-IDF values cannot be negative.");
+			} else if (Double.isNaN(value)) {
+				throw new IllegalArgumentException("TF-IDF values cannot be NaN.");
+			}
 			norm += value * value;
 		}
+		
 		norm = Math.sqrt(norm);
+		
 		if (norm == 0) { 
 			return vector;
 		}
+		
 		Map<String, Double> normalized = new HashMap<>();
+		
 		for (Map.Entry<String, Double> entry : vector.entrySet()) {
 			normalized.put(entry.getKey(), entry.getValue() / norm);
 		}
+		
 		return normalized;
 	}
 	
+	// for testing
+	public Map<String, Map<String, Double>> getTfIdfDict() {
+		return tfIdfDict;
+	}
 	
+	public Set<String> getCorpus() {
+		return corpus;
+	}
 	
+	public Map<String, Integer> getTermDocumentFreq() {
+		return termDocumentFreq;
+	}
+	
+	public Map<String, Map<String, Double>> getTfDict() {
+		return tfDict;
+	}	
+	
+	public Map<String, Double> getIdfDict() {
+		return idfDict;
+	}
+	
+	public void setNewData(Data data) {
+		this.data = data;
+		this.userRatings = data.getUserRatings();
+		this.books = data.getBooks();
+	}
 }

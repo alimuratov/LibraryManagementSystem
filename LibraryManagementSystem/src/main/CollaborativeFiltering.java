@@ -13,22 +13,47 @@ public class CollaborativeFiltering extends RecommendationStrategyBase {
     private Map<Book, Map<Book, BigDecimal>> bookSimilarities = new HashMap<>();
     private Map<Book, Map<Book, Integer>> frequencies = new HashMap<>();
     private Map<User, Map<Book, BigDecimal>> predictedUserRatings = new HashMap<>();    
-    private Data data; 
     
     public CollaborativeFiltering(Data data) {
         super(data);
     }
     
     @Override
-    public Book[] getRecommendations(User user, int numberOfRecommendations) {
+    public Book[] getRecommendations(User user, int numberOfRecommendations) throws UserRatingsNotFound {
+    	if (numberOfRecommendations <= 0) {
+			System.out.println("Number of recommendations cannot be less than one.");
+			return new Book[0];
+		}
+		if (user == null) {
+			throw new NullPointerException("User cannot be null");
+		}
     	// if no predictions have been made for the user, run slopeOne() algorithm
-    	if(!predictedUserRatings.containsKey(user)) {
-			slopeOne();
+		if (!predictedUserRatings.containsKey(user)) {
+		    slopeOne();
+		    if (!predictedUserRatings.containsKey(user)) {
+		        throw new UserRatingsNotFound("User's rating records are not found in the database.");
+		    }
+		}
+
+    	
+    	Map<Book, BigDecimal> initialRatings = userRatings.get(user);
+    	Map<Book, BigDecimal> predictedRatings = predictedUserRatings.get(user);
+    	
+    	if(initialRatings != null && predictedRatings != null) {
+    		predictedRatings.keySet().removeAll(initialRatings.keySet());
     	}
     	
-    	Map<Book, BigDecimal> ratedBooks = predictedUserRatings.get(user);
+    	if (predictedRatings.size() == 0) {
+    		System.out.println("No recommendations available. You may have already rated all the books.");
+			return new Book[0]; 
+    	}
     	
-    	Book[] sortedBooks = ratedBooks.entrySet() // retrieves a set of Map.Entry<Book, BigDecimal>; this is necessary in order to perform operations that involve both keys and values (e.g., sorting)
+    	if (predictedRatings.size() < numberOfRecommendations) {
+    		System.out.println("Requested number of recommendations exceeds the number of available books.");
+    		numberOfRecommendations = predictedRatings.size();
+    	}
+    	
+    	Book[] sortedBooks = predictedRatings.entrySet() // retrieves a set of Map.Entry<Book, BigDecimal>; this is necessary in order to perform operations that involve both keys and values (e.g., sorting)
     			.stream() // since we converted Map into a collection of entries, we can stream this collection and use  
     			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) // sorting books by their ratings in descending order 
     			.limit(numberOfRecommendations)
@@ -43,7 +68,7 @@ public class CollaborativeFiltering extends RecommendationStrategyBase {
         predictRatings();
     }
     
-    private void calculateDifferences() {
+    public void calculateDifferences() {
         for (User user : userRatings.keySet()) {
             for (Book book1 : userRatings.get(user).keySet()) {
                 for (Book book2 : userRatings.get(user).keySet()) {
@@ -92,8 +117,6 @@ public class CollaborativeFiltering extends RecommendationStrategyBase {
                     }
                 }
                 
-                // no user has rated `book` and any of the books the current user has rated
-                // so for the current user the prediction is based on the
                 if (denominator.equals(BigDecimal.ZERO)) {
                     currentUserRatings.put(book, BigDecimal.ZERO);
                     continue;
@@ -108,5 +131,13 @@ public class CollaborativeFiltering extends RecommendationStrategyBase {
 
     public Map<User, Map<Book, BigDecimal>> getPredictedUserRatings() {
         return predictedUserRatings;
+    }
+    
+    public Map<Book, Map<Book, BigDecimal>> getBookSimilarities() {
+    	return bookSimilarities;
+    }
+    
+    public Map<Book, Map<Book, Integer>> getFrequencies() {
+    	return frequencies;
     }
 }

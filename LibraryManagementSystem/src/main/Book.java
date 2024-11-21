@@ -2,6 +2,7 @@ package main;
 
 public class Book {
 	private String bookName;
+	private Integer bookId;
 	private String bookDescription;
 	
 	public Book() { }
@@ -9,6 +10,12 @@ public class Book {
 	public Book(String bookName, String bookDescription) {
 		this.bookName = bookName;
 		this.bookDescription = bookDescription;
+	}
+	
+	public Book(String bookName, String bookDescription, Integer id) {
+		this.bookName = bookName; 
+		this.bookDescription = bookDescription;
+		this.bookId = id;
 	}
 	
 	public String getBookName() {
@@ -36,7 +43,10 @@ public class Book {
 	
 	@Override
 	public int hashCode() {
-		return bookName.hashCode();
+		if (bookId == null) {
+			return bookName.hashCode();
+		}
+		return bookId.hashCode();
 	}
 
 	public String getBookDescription() {

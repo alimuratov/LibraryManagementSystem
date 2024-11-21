@@ -35,5 +35,6 @@ public abstract class RecommendationStrategyBase implements RecommendationStrate
     }
 	
 	@Override
-    public abstract Book[] getRecommendations(User user, int numberOfRecommendations);
+    public abstract Book[] getRecommendations(User user, int numberOfRecommendations)
+    	throws UserRatingsNotFound;
 }

@@ -34,7 +34,9 @@ public class Data {
 	}
 	
 	public boolean isBookRatedByUser(Book book, User user) {
-		if((userRatings.containsKey(user) && userRatings.get(user).containsKey(book))) return true;
+		if((userRatings.containsKey(user) && userRatings.get(user).containsKey(book))) {
+			return true;
+		}
 		return false;
 	}
 }

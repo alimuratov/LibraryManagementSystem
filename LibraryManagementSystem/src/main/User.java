@@ -4,12 +4,18 @@ import java.util.Map;
 
 public class User {
 	private String userName;
+	private Integer id;
 	private Map<String, Double> profileVector;
 
 	public User() { }
 
 	public User(String userName) {
 		this.userName = userName;
+	}
+	
+	public User(String userName, Integer id) {
+		this.userName = userName;
+		this.id = id;
 	}
 
 	public void setProfileVector(Map<String, Double> profileVector) {
@@ -43,7 +49,10 @@ public class User {
 	
 	@Override
 	public int hashCode() {
-		return userName.hashCode();
+		if (id == null) {
+			return userName.hashCode();
+		}
+		return id.hashCode();
 	}
 }
 
