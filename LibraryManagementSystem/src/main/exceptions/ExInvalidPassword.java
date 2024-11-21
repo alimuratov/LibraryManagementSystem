@@ -5,13 +5,15 @@ import java.util.ArrayList;
 public class ExInvalidPassword extends Exception{
     private static String constructString(boolean hasUpper, boolean hasLower, boolean hasNumber){
         ArrayList<String> needed = new ArrayList<String>();
-        int n = needed.size();
+        
         if(!hasNumber)
             needed.add("at least one digit");
         if(!hasUpper)
             needed.add("at least one uppercase letter");
         if(!hasLower)
             needed.add("at least one lowercase letter");
+        
+        int n = needed.size();
         
         String result = "";
 

@@ -2,6 +2,7 @@ package main.authentication;
 import java.util.ArrayList;
 
 import main.users.*;
+import main.exceptions.*;
 
 public class SessionManager {
     private ArrayList<Session> sessions;
@@ -28,15 +29,15 @@ public class SessionManager {
         sessions.add(session);
     }
 
-    public boolean removeSession(User user){
+    public void removeSession(User user) throws ExUserDoesNotExist{
         for(Session session: sessions)
             if(session.getUser().equals(user) && session.getIsValid()){
                 session.setIsValid(false);
                 sessions.remove(session);
-                return true;
+                return;
             }
         
-        return false;
+        throw new ExUserDoesNotExist();
             
     }
 }

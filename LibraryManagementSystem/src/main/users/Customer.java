@@ -13,13 +13,12 @@ public class Customer extends User {
     private Set<Book> rentedBooks = new HashSet<>();
     private Set<Book> purchasedBooks = new HashSet<>();
     private Set<Review> reviews = new HashSet<>();
-
     private Map<String, Double> profileVector;
 
     // Constructor
-    public Customer(String userName, Password password, MembershipType membershipType) {
+    public Customer(String userName, Password password) {
         super(userName, password);
-        this.membership = new Membership(membershipType);
+        this.membership = new Membership(MembershipType.BRONZE);
     }
 
     // Getters
@@ -44,7 +43,7 @@ public class Customer extends User {
     }
 
     // Setter
-    public void setMembership(MembershipType membershipType) {
+    public void upgradeMembership(MembershipType membershipType) {
         this.membership = new Membership(membershipType);
     }
     
@@ -62,21 +61,21 @@ public class Customer extends User {
     }
 
     public void removeRentedBook(Book book) {
-        rentedBooks.remove(book);
+        if (rentedBooks.contains(book)) {
+            rentedBooks.remove(book);
+        }
     }
 
-    // Methods to manage purchased books (if needed)
+    // Methods to manage purchased books
     public void addPurchasedBook(Book book) {
         purchasedBooks.add(book);
     }
 
     public void removePurchasedBook(Book book) {
         purchasedBooks.remove(book);
-    }
-
-    public double calculateDiscountedPrice(double originalPrice) {
-        double discount = membership.getPurchaseDiscount();
-        return originalPrice * (1 - discount);
+        if (purchasedBooks.contains(book)) {
+            purchasedBooks.remove(book);
+        }
     }
 
     // Review Methods
@@ -90,5 +89,4 @@ public class Customer extends User {
             throw new IllegalArgumentException("User has not rented or purchased this book.");
         }
     }
-    // Additional methods will be added here
 }

@@ -15,7 +15,7 @@ public class Membership {
                 this.maxRentBooks = 2;
                 this.rentalPeriodDays = 14;
                 this.purchaseDiscount = 0.0;
-                this.waitlistPriority = 1;
+                this.waitlistPriority = 3;
                 break;
             case SILVER:
                 this.maxRentBooks = 5;
@@ -27,7 +27,7 @@ public class Membership {
                 this.maxRentBooks = 10;
                 this.rentalPeriodDays = 30;
                 this.purchaseDiscount = 0.20;
-                this.waitlistPriority = 3;
+                this.waitlistPriority = 1;
                 break;
         }
     }
@@ -53,4 +53,8 @@ public class Membership {
         return waitlistPriority;
     }
 
+    public double calculateDiscountedPrice(double originalPrice) {
+        double discount = getPurchaseDiscount();
+        return originalPrice * (1 - discount);
+    }
 }

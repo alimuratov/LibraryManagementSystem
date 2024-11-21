@@ -1,4 +1,4 @@
-package test.testBook;
+package test;
 
 public class TestRentalRecord {
 

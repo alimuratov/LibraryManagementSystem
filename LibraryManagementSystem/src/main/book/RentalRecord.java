@@ -20,7 +20,7 @@ public class RentalRecord {
         this.customer = customer;
         this.rentalCopy = rentalCopy;
         this.rentalDate = LocalDate.now(); 
-        this.returnDate = rentalDate.plusDays(DEFAULT_RENTAL_PERIOD_DAYS); 
+        this.returnDate = rentalDate.plusDays(customer.getMembership().getRentalPeriodDays()); 
     }
 
     public Customer getCustomer() {

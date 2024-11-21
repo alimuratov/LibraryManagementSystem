@@ -79,29 +79,15 @@ public class AuthenticationService{
         return user;
     }
 
-    public Boolean logout(User user){
-        return sessionManager.removeSession(user);
-    }
-/*
-    public User register(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
-
-        if(nameAlreadyExists(name))
-            throw new ExTakenUsername();
-
+    public Admin loginAdmin(String parole) throws ExIncorrectPassword{
         Password password = new Password(parole);
-        User user = new Customer(name, password);
-        
-        try{
-            Password.validPassword(password);
-        } catch (ExInvalidPassword e){
-            throw e;
-        }
-
-        User newUser = new User(name, password);
-        users.add(newUser);
-        return user;
+        return getAdmin(password);
     }
-*/
+
+    public void logout(User user) throws ExUserDoesNotExist{
+        sessionManager.removeSession(user);
+    }
+
     public Customer registerCustomer(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
         if(nameAlreadyExists(name))
             throw new ExTakenUsername();

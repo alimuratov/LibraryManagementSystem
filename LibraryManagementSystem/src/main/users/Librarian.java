@@ -59,7 +59,7 @@ public class Librarian extends User {
             availableCopy.rent(customer);
 
             int rentalPeriod = customer.getMembership().getRentalPeriodDays();
-            RentalRecord rentalRecord = new RentalRecord(customer, availableCopy, rentalPeriod);
+            RentalRecord rentalRecord = new RentalRecord(customer, availableCopy);
             availableCopy.addRentalRecord(rentalRecord);
 
             activeRentals.computeIfAbsent(customer.getUserID(), k -> new ArrayList<>()).add(rentalRecord);
@@ -129,7 +129,7 @@ public class Librarian extends User {
             SalableBookCopy saleCopy = book.getSaleableCopies().remove(0);
 
             double originalPrice = book.getBookPrice();
-            double discountedPrice = customer.calculateDiscountedPrice(originalPrice);
+            double discountedPrice = customer.getMembership().calculateDiscountedPrice(originalPrice);
 
             System.out.println("Original Price: $" + originalPrice);
             System.out.println("Discounted Price for " + customer.getUserName() + ": $" + discountedPrice);

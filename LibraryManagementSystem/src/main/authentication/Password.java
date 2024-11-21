@@ -15,9 +15,10 @@ public class Password { //this class is added because in the future we might imp
     }
 
     private static boolean hasLower(String string){
-        char[] stringCopy = string.toCharArray();
-        for(char c: stringCopy)
-            if('a' <= c && c <= 'z')
+    	char[] stringCopy = string.toCharArray();
+        int n = string.length();
+        for(int i = 0; i < n; i++)
+            if('a' <= stringCopy[i] && stringCopy[i] <= 'z')
                 return true;
         
         return false;
@@ -25,17 +26,19 @@ public class Password { //this class is added because in the future we might imp
 
     private static boolean hasUpper(String string){
         char[] stringCopy = string.toCharArray();
-        for(char c: stringCopy)
-            if('A' <= c && c <= 'A')
+        int n = string.length();
+        for(int i = 0; i < n; i++)
+            if('A' <= stringCopy[i] && stringCopy[i] <= 'Z')
                 return true;
         
         return false;
     }
 
     private static boolean hasNumber(String string){
-        char[] stringCopy = string.toCharArray();
-        for(char c: stringCopy)
-            if('0' <= c && c <= '9')
+    	char[] stringCopy = string.toCharArray();
+        int n = string.length();
+        for(int i = 0; i < n; i++)
+            if('0' <= stringCopy[i] && stringCopy[i] <= '9')
                 return true;
         
         return false;

@@ -20,8 +20,7 @@ public class Book {
     private List<SalableBookCopy> saleCopies; 
     private Queue<Customer> rentingWaitList;
     private Queue<Customer> sellingWaitList;
-    private ArrayList<SalableBookCopy> soldCopies;
-    private List<Review> allReviews;
+    private List<Review> reviews;
     private static ArrayList<Book> allBooks;
 
     // Constructor
@@ -33,17 +32,13 @@ public class Book {
         this.publicationDate = publicationDate;
         this.bookDescription = bookDescription;
         this.bookPrice = Price;
-
-        this.rentalCopies = new ArrayList<>();
-        this.saleCopies = new ArrayList<>();
-        this.soldCopies = new ArrayList<>();
         this.rentingWaitList = new PriorityQueue<>(
-                Comparator.comparingInt(c -> -c.getMembership().getWaitlistPriority())
+                Comparator.comparingInt(c -> c.getMembership().getWaitlistPriority())
             );
         this.sellingWaitList = new PriorityQueue<>(
-                Comparator.comparingInt(c -> -c.getMembership().getWaitlistPriority())
+                Comparator.comparingInt(c -> c.getMembership().getWaitlistPriority())
             );
-        this.allReviews = new ArrayList<>();
+        this.reviews = new ArrayList<>();
     }
 
     public Book(String title, String bookDescription) {
@@ -106,7 +101,6 @@ public class Book {
         }else{
         	SalableBookCopy sellingCopy = saleCopies.remove(0);
         	sellingCopy.sold(customer);
-        	soldCopies.add(sellingCopy);
            	System.out.print("Buying Successfully for book\n");
         }
     	
@@ -115,11 +109,6 @@ public class Book {
     public void addSellingWaitList(Customer customer) {
     	sellingWaitList.add(customer);
 	}
-    
-    public List<SalableBookCopy> getSoldCopies() {
-        return new ArrayList<>(soldCopies);
-    } 
-
 	//renting book
     public void Lend(Customer customer) {
     	RentalBookCopy rentingCopy = getAvailableLendingCopy();
@@ -130,7 +119,6 @@ public class Book {
         	rentingCopy.rent(customer);
            	System.out.print("Lending Successfully for book\n");
         }
-
 	}
     
     public RentalBookCopy getAvailableLendingCopy() {
@@ -157,33 +145,19 @@ public class Book {
         return n + "available rentable copy";
     }
 
-    public void addRentalCopy(RentalBookCopy copy) {
-        rentalCopies.add(copy);
-        System.out.print("Add one rentable copy of book\n");
-    }
-
-    //sale copies add & get
-    public void addSaleableCopy(SalableBookCopy copy) {
-        saleCopies.add(copy);
-        System.out.print("Add one seleable copy of book\n");
-    }
-    public String showAvailableSellableCopies() {
-        return this.saleCopies.size() + "available sellable copy";
-    }
-
     //review add & get
     public void addReview(Review review) {
         if (review == null) {
             throw new IllegalArgumentException("Review cannot be null.");
         }
-        allReviews.add(review);
+        reviews.add(review);
     }
     
     public void displayReviews() {
-        if (allReviews.isEmpty()) {
+        if (reviews.isEmpty()) {
             System.out.println("No reviews yet.");
         } else {
-            for (Review review : allReviews) {
+            for (Review review : reviews) {
                 System.out.println(review);
             }
         }

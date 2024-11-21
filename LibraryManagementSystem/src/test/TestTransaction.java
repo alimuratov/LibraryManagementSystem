@@ -1,4 +1,4 @@
-package test.testTransaction;
+package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
