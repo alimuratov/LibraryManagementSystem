@@ -17,7 +17,7 @@ public class Customer extends User {
     // Constructor
     public Customer(String userName, Password password) {
         super(userName, password);
-        this.membership = new Membership(MembershipType.BRONZE);
+        this.membership = new Membership();
         this.rentedBooks = new HashSet<>();
         this.purchasedBooks = new HashSet<>();
         this.reviews = new HashSet<>();
@@ -46,7 +46,7 @@ public class Customer extends User {
 
     // Setters
     public void upgradeMembership(MembershipType membershipType) {
-        this.membership = new Membership(membershipType);
+        this.membership = new Membership();
     }
 
     public void setProfileVector(Map<String, Double> profileVector) {
