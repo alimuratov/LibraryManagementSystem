@@ -1,4 +1,4 @@
-package test;
+package test.testTransaction;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import main.transaction.*;
 
 public class TestTransaction {
-	
-	PrintStream oldPrintStream;
+    
+    PrintStream oldPrintStream;
     ByteArrayOutputStream bos;
     
     private void setOutput() throws Exception {
@@ -25,79 +25,96 @@ public class TestTransaction {
     }
     
     @Test
-    public void testCreditCardPayment() throws Exception{
-    	setOutput();
-        PaymentMethod paymentMethod = new CreditCardPayment();
-        RefundMethod refundMethod = new CreditCardRefund();
-        double amount = 100.569;
+    public void testCreditCardPayment() throws Exception {
+        setOutput();
         String transactionID = Transaction.getNewTransactionID();
-        Transaction transaction = new Transaction(transactionID, amount, paymentMethod, refundMethod);
-        assertEquals(transaction.getIsPaymentProcessed(), false);
+        Transaction transaction = PaymentFactory.createTransaction(transactionID, 100.00, "CreditCard", "CreditCard");
+        
+        assertFalse(transaction.isPaymentProcessed());
         transaction.processPayment();
-        assertEquals(transaction.getIsPaymentProcessed(), true);
-        assertEquals(transaction.getIsPaymentRefunded(), false);
+        assertTrue(transaction.isPaymentProcessed());
+        assertFalse(transaction.isPaymentRefunded());
+        
         transaction.processRefund();
-        assertEquals(transaction.getIsPaymentRefunded(), true);
-        assertEquals(Transaction.getNewTransactionID(), Integer.toString(Integer.parseInt(transactionID) + 1));
+        assertTrue(transaction.isPaymentRefunded());
+        
         String result = String.format("Processing credit card payment of: HK$%.2f.\n" +
-                "Transaction ID: %s was processed successfully.\n" +
-                "Processing credit card refund of: HK$%.2f.\n" +
-                "Transaction ID: %s was refunded successfully.\n",
-                amount, transactionID, amount, transactionID);
+                                       "Transaction ID: %s was processed successfully.\n" +
+                                       "Processing credit card refund of: HK$%.2f.\n" +
+                                       "Transaction ID: %s was refunded successfully.\n",
+                                       100.00, transactionID, 100.00, transactionID);
         assertEquals(result, getOutput());
     }
     
     @Test
-	public void testWeChatPayment() throws Exception {
-		setOutput();
-		PaymentMethod paymentMethod = new WeChatPayment();
-		RefundMethod refundMethod = new WeChatRefund();
-		double amount = 100.569;
-		String transactionID = "1";
-		Transaction transaction = new Transaction(transactionID, amount, paymentMethod, refundMethod);
-		transaction.processPayment();
-		transaction.processRefund();
-
-		String result = String.format("Processing WeChat payment of: HK$%.2f.\n" + 
-				"Transaction ID: %s was processed successfully.\n" + 
-				"Processing WeChat refund of: HK$%.2f.\n" + 
-				"Transaction ID: %s was refunded successfully.\n",
-				amount, transactionID, amount, transactionID);
-		assertEquals(result, getOutput());
-	}
+    public void testWeChatPayment() throws Exception {
+        setOutput();
+        String transactionID = Transaction.getNewTransactionID();
+        Transaction transaction = PaymentFactory.createTransaction(transactionID, 100.00, "WeChat", "WeChat");
+        
+        assertFalse(transaction.isPaymentProcessed());
+        transaction.processPayment();
+        assertTrue(transaction.isPaymentProcessed());
+        assertFalse(transaction.isPaymentRefunded());
+        
+        transaction.processRefund();
+        assertTrue(transaction.isPaymentRefunded());
+        
+        String result = String.format("Processing WeChat payment of: HK$%.2f.\n" + 
+                                       "Transaction ID: %s was processed successfully.\n" + 
+                                       "Processing WeChat refund of: HK$%.2f.\n" + 
+                                       "Transaction ID: %s was refunded successfully.\n",
+                                       100.00, transactionID, 100.00, transactionID);
+        assertEquals(result, getOutput());
+    }
     
     @Test
-    public void testMoreRefund() throws Exception {
-    	setOutput();
-		PaymentMethod paymentMethod = new WeChatPayment();
-		RefundMethod refundMethod = new WeChatRefund();
-		double amount = 100.569;
-		String transactionID = "1";
-		Transaction transaction = new Transaction(transactionID, amount, paymentMethod, refundMethod);
-		transaction.processPayment();
-		transaction.processRefund();
-		transaction.processRefund();
-
-		String result = String.format("Processing WeChat payment of: HK$%.2f.\n" +
-                "Transaction ID: %s was processed successfully.\n" +
-                "Processing WeChat refund of: HK$%.2f.\n" +
-                "Transaction ID: %s was refunded successfully.\n" +
-                "Payment has already been refunded.\n",
-                amount, transactionID, amount, transactionID);
+    public void testMoreRefunds() throws Exception {
+        setOutput();
+        String transactionID = Transaction.getNewTransactionID();
+        Transaction transaction = PaymentFactory.createTransaction(transactionID, 100.00, "WeChat", "WeChat");
+        
+        transaction.processPayment();
+        transaction.processRefund();
+        
+        // Attempting a second refund
+        transaction.processRefund();
+        
+        String result = String.format("Processing WeChat payment of: HK$%.2f.\n" +
+                                       "Transaction ID: %s was processed successfully.\n" +
+                                       "Processing WeChat refund of: HK$%.2f.\n" +
+                                       "Transaction ID: %s was refunded successfully.\n" +
+                                       "Payment has already been refunded.\n",
+                                       100.00, transactionID, 100.00, transactionID);
         assertEquals(result, getOutput());
     }
     
     @Test
     public void testNotFoundTransaction() throws Exception {
-    	setOutput();
-		PaymentMethod paymentMethod = new WeChatPayment();
-    	RefundMethod refundMethod = new WeChatRefund();
-		double amount = 100.569;
-		String transactionID = "1";
-		Transaction transaction = new Transaction(transactionID, amount, paymentMethod, refundMethod);
-		transaction.processRefund();
-		
-		String result = "Transaction not found.\n";
-		assertEquals(result, getOutput());
+        setOutput();
+        String transactionID = Transaction.getNewTransactionID();
+        Transaction transaction = PaymentFactory.createTransaction(transactionID, 100.00, "WeChat", "WeChat");
+        
+        // Refund before processing payment
+        transaction.processRefund();
+        
+        String result = "Transaction not found.\n";
+        assertEquals(result, getOutput());
+    }
+
+    @Test
+    public void testInvalidPaymentMethod() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            PaymentFactory.createTransaction("TX999", 100.00, "InvalidMethod", "CreditCard");
+        });
+        assertEquals("Unknown payment method: InvalidMethod", exception.getMessage());
+    }
+
+    @Test
+    public void testInvalidRefundMethod() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            PaymentFactory.createTransaction("TX999", 100.00, "CreditCard", "InvalidMethod");
+        });
+        assertEquals("Unknown refund method: InvalidMethod", exception.getMessage());
     }
 }
