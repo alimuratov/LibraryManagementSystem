@@ -1,24 +1,26 @@
 package main.users;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import main.authentication.*;
-import main.book.*;
+import main.authentication.Password;
+import main.book.Book;
+import main.book.Review;
 
 public class Customer extends User {
     private Membership membership;
-    private Set<Book> rentedBooks = new HashSet<>();
-    private Set<Book> purchasedBooks = new HashSet<>();
-    private Set<Review> reviews = new HashSet<>();
+    private Set<Book> rentedBooks;
+    private Set<Book> purchasedBooks;
+    private Set<Review> reviews;
     private Map<String, Double> profileVector;
+    private Librarian librarian = Librarian.getInstance()
 
     // Constructor
     public Customer(String userName, Password password) {
         super(userName, password);
         this.membership = new Membership(MembershipType.BRONZE);
+        this.rentedBooks = new HashSet<>();
+        this.purchasedBooks = new HashSet<>();
+        this.reviews = new HashSet<>();
     }
 
     // Getters
@@ -42,40 +44,44 @@ public class Customer extends User {
         return this.profileVector;
     }
 
-    // Setter
+    // Setters
     public void upgradeMembership(MembershipType membershipType) {
         this.membership = new Membership(membershipType);
     }
-    
+
     public void setProfileVector(Map<String, Double> profileVector) {
         this.profileVector = profileVector;
     }
 
-    // Methods to manage rented books
-    public void addRentedBook(Book book) {
-        if (rentedBooks.size() >= membership.getMaxRentBooks()) {
-            System.out.println("Reached maximum rented books limit for your membership level.");
-            throw new IllegalStateException("Cannot rent more books.");
-        }
+    // Methods to manage rented books (now called internally)
+    protected void addRentedBook(Book book) {
         rentedBooks.add(book);
     }
 
-    public void removeRentedBook(Book book) {
-        if (rentedBooks.contains(book)) {
-            rentedBooks.remove(book);
-        }
+    protected void removeRentedBook(Book book) {
+        rentedBooks.remove(book);
     }
 
-    // Methods to manage purchased books
-    public void addPurchasedBook(Book book) {
+    // Methods to manage purchased books (now called internally)
+    protected void addPurchasedBook(Book book) {
         purchasedBooks.add(book);
     }
 
-    public void removePurchasedBook(Book book) {
+    protected void removePurchasedBook(Book book) {
         purchasedBooks.remove(book);
-        if (purchasedBooks.contains(book)) {
-            purchasedBooks.remove(book);
-        }
+    }
+
+    // Public methods to interact with books via Librarian
+    public void rentBook(Librarian librarian, Book book) {
+        librarian.rentBook(this, book);
+    }
+
+    public void returnBook(Librarian librarian, Book book) {
+        librarian.returnBook(this, book);
+    }
+
+    public void purchaseBook(Librarian librarian, Book book) {
+        librarian.purchaseBook(this, book);
     }
 
     // Review Methods
