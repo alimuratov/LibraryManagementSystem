@@ -9,32 +9,29 @@ import main.users.*;
 
 
 public class TestSessionManager {
+    
     @Test
-    public void testCreateSession_1(){
+    public void testCreateSession(){
         SessionManager sessionManager = SessionManager.getInstance();
+        int oldCount = sessionManager.getSize();
         Password password = new Password("AStrongPa55word");
         User user = new Customer("Kazakhstan", password);
 
         sessionManager.createSession(user);
-        assertEquals(sessionManager.getSize(), 1);
-    }
-
-    @Test
-    public void testCreateSession_2(){
-        SessionManager sessionManager = SessionManager.getInstance();
-        assertEquals(sessionManager.getSize(), 0);      
+        assertEquals(sessionManager.getSize(), oldCount + 1);
     }
 
     @Test
     public void testRemoveSession_1(){
         SessionManager sessionManager = SessionManager.getInstance();
+        int oldCount = sessionManager.getSize();
         Password password = new Password("AStrongPa55word");
         User user = new Customer("Kazakhstan", password);
 
         sessionManager.createSession(user);
         try {
             sessionManager.removeSession(user);
-            assertEquals(sessionManager.getSize(), 0);
+            assertEquals(sessionManager.getSize(), oldCount);
         } catch (Exception e){
             fail("Remove session should not throw an exception, but it threw: " + e.getMessage());
         }

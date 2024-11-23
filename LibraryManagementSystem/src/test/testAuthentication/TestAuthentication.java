@@ -112,7 +112,7 @@ public class TestAuthentication {
     @Test
     public void testRegister_4(){ //invalid password (no lowercase letters)
         AuthenticationService authenticationService = AuthenticationService.getInstance();
-        String parole = "1234567123a";
+        String parole = "1234567123A";
         String userName = "StevenDoe";
 
         ExInvalidPassword e = assertThrows(ExInvalidPassword.class, () -> {
@@ -207,7 +207,10 @@ public class TestAuthentication {
         String parole = "1234ABCDefg";
         Password password = new Password(parole);
         String userName = "Abc";
-        Customer customer = new Customer(userName, password);
+        User customer = new Customer(userName, password);
+        authenticationService.addUser(customer);
+        SessionManager sessionManager = SessionManager.getInstance();
+        sessionManager.createSession(customer);
         try{
             authenticationService.logout(customer);
         } catch (Exception e) {

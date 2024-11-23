@@ -55,10 +55,6 @@ public class AuthenticationService{
                 return true;
         }
 
-        String adminName = admin.getUserName();
-        if(adminName.equals(name))
-            return true;
-
         return false;
     }
 
@@ -87,7 +83,26 @@ public class AuthenticationService{
     public void logout(User user) throws ExUserDoesNotExist{
         sessionManager.removeSession(user);
     }
+/*
+    public User register(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
 
+        if(nameAlreadyExists(name))
+            throw new ExTakenUsername();
+
+        Password password = new Password(parole);
+        User user = new Customer(name, password);
+        
+        try{
+            Password.validPassword(password);
+        } catch (ExInvalidPassword e){
+            throw e;
+        }
+
+        User newUser = new User(name, password);
+        users.add(newUser);
+        return user;
+    }
+*/
     public Customer registerCustomer(String name, String parole) throws ExInvalidPassword, ExTakenUsername{
         if(nameAlreadyExists(name))
             throw new ExTakenUsername();

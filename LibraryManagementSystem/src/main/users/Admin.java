@@ -26,15 +26,13 @@ public class Admin extends User {
      * @param book The book to add.
      * @return true if the book was successfully added, false otherwise.
      */
-    public boolean addBook(Book book) {
+    public void addBook(Book book) {
         List<Book> allBooks = Book.getAllBooks();
         if (!allBooks.contains(book)) {
             allBooks.add(book);
             System.out.println("Book added to the library: " + book.getDisplayText());
-            return true;
         } else {
             System.out.println("Book already exists in the library: " + book.getDisplayText());
-            return false;
         }
     }
 
@@ -44,15 +42,13 @@ public class Admin extends User {
      * @param book The book to remove.
      * @return true if the book was successfully removed, false otherwise.
      */
-    public boolean removeBook(Book book) {
+    public void removeBook(Book book) {
         List<Book> allBooks = Book.getAllBooks();
         if (allBooks.contains(book)) {
             allBooks.remove(book);
             System.out.println("Book removed from the library: " + book.getDisplayText());
-            return true;
         } else {
             System.out.println("Book not found in the library: " + book.getDisplayText());
-            return false;
         }
     }
 

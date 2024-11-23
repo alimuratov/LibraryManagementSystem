@@ -1,46 +1,40 @@
 package main.book;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
-
+import java.util.*;
 import main.users.Customer;
 
 public class Book {
-	private String isbn;
+    private String isbn;
     private String title;
     private String author;
     private String publisher; 
     private String publicationDate; 
     private String bookDescription;
-    private int bookPrice;
-    private List<RentalBookCopy> rentalCopies; 
-    private List<SalableBookCopy> saleCopies; 
+    private double bookPrice;
+    private int rentableCopies;
+    private int saleableCopies;
+    private List<Review> reviews;
     private Queue<Customer> rentingWaitList;
     private Queue<Customer> sellingWaitList;
-    private List<Review> reviews;
-    private static ArrayList<Book> allBooks;
+    private static List<Book> allBooks;
 
-    // Constructor
-    public Book(String isbn, String title, String author, String publisher, String publicationDate,String bookDescription, int Price) {
+    // Constructor with all details
+    public Book(String isbn, String title, String author, String publisher, String publicationDate, String bookDescription, double price, int rentableCopies, int saleableCopies) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.publicationDate = publicationDate;
         this.bookDescription = bookDescription;
-        this.bookPrice = Price;
-        this.rentingWaitList = new PriorityQueue<>(
-                Comparator.comparingInt(c -> c.getMembership().getWaitlistPriority())
-            );
-        this.sellingWaitList = new PriorityQueue<>(
-                Comparator.comparingInt(c -> c.getMembership().getWaitlistPriority())
-            );
+        this.bookPrice = price;
+        this.rentableCopies = rentableCopies;
+        this.saleableCopies = saleableCopies;
         this.reviews = new ArrayList<>();
+        this.rentingWaitList = new PriorityQueue<>(Comparator.comparingInt(c -> c.getMembership().getWaitlistPriority()));
+        this.sellingWaitList = new PriorityQueue<>(Comparator.comparingInt(c -> c.getMembership().getWaitlistPriority()));
     }
 
+    // Simplified constructor
     public Book(String title, String bookDescription) {
         this("000-0000000000",
              title, 
@@ -48,15 +42,52 @@ public class Book {
              "Unknown Publisher",
              "2024-01-01",
              bookDescription, 
-             0);
+             0.0, // Default price
+             0,   // Default rentable copies
+             0    // Default saleable copies
+        );
     }
-    
-    //Singleton
-    public static ArrayList<Book> getAllBooks() {
+
+    // Static method to get all books
+    public static List<Book> getAllBooks() {
         if (allBooks == null) {
-        	allBooks = new ArrayList<>();
+            allBooks = new ArrayList<>();
         }
         return allBooks;
+    }
+
+    // Method to add a book to the list of all books
+    public static void addBook(Book book) {
+        getAllBooks().add(book);
+    }
+
+    // Getters
+    public String getBookTitle() {
+        return title;
+    }
+
+    public double getBookPrice() {
+        return bookPrice;
+    }
+
+    public int getRentableCopies() {
+        return rentableCopies;
+    }
+
+    public int getSaleableCopies() {
+        return saleableCopies;
+    }
+
+    public List<Review> getReviews() {
+        return Collections.unmodifiableList(reviews);
+    }
+
+    public Queue<Customer> getRentingWaitList() {
+        return rentingWaitList;
+    }
+
+    public Queue<Customer> getSellingWaitList() {
+        return sellingWaitList;
     }
 
     // Setters
@@ -68,91 +99,41 @@ public class Book {
         this.author = author;
     }
     
-    public Queue<Customer> getSellingWaitList() {
-        return sellingWaitList;
+    public void setRentableCopies(int rentableCopies) {
+        this.rentableCopies = rentableCopies;
     }
 
-    // Getters
-    public String getBookTitle() {
-        return this.title;
+    public void setSaleableCopies(int saleableCopies) {
+        this.saleableCopies = saleableCopies;
     }
 
-    public String getBookDescription() {
-        return this.bookDescription;
+
+    // Methods to check availability
+    public boolean isRentable() {
+        return rentableCopies > 0;
     }
-    
-    public Queue<Customer> getRentingWaitList() {
-        return rentingWaitList;
-    }
-    
-    //selling book
+
     public boolean isSalable() {
-    	if (saleCopies.isEmpty()) {
-    		return false;
-    	}else {
-    		return true;
-    	}
+        return saleableCopies > 0;
     }
-    
-    public void Buy(Customer customer) {
-        if (!isSalable()) {
-        	addSellingWaitList(customer);
-        	System.out.print("No book available for selling.\n"); 
-        }else{
-        	SalableBookCopy sellingCopy = saleCopies.remove(0);
-        	sellingCopy.sold(customer);
-           	System.out.print("Buying Successfully for book\n");
-        }
-    	
+
+    // Methods to handle waitlists
+    public void addRentingWaitList(Customer customer) {
+        rentingWaitList.add(customer);
     }
-    
+
     public void addSellingWaitList(Customer customer) {
-    	sellingWaitList.add(customer);
-	}
-	//renting book
-    public void Lend(Customer customer) {
-    	RentalBookCopy rentingCopy = getAvailableLendingCopy();
-        if (rentingCopy == null) { 
-            addLendingWaitList(customer);
-            System.out.print("No book available for lending.\n"); 
-        }else{
-        	rentingCopy.rent(customer);
-           	System.out.print("Lending Successfully for book\n");
-        }
-	}
-    
-    public RentalBookCopy getAvailableLendingCopy() {
-    	for (RentalBookCopy copy: this.rentalCopies) {
-    		if (!copy.isRented()) {
-    			return copy;
-    		}
-    	}
-		return null;
-	}
-
-	public void addLendingWaitList(Customer observer) {
-    	rentingWaitList.add(observer);
-	}
-	
-
-    //rental copies add & get
-    public String showAvailableRentalCopies() {
-    	int n = 0;
-    	for (RentalBookCopy r: rentalCopies) {
-    		if (!r.isRented())
-    			n++;
-    	}
-        return n + "available rentable copy";
+        sellingWaitList.add(customer);
     }
 
-    //review add & get
+    // Methods for reviews
     public void addReview(Review review) {
         if (review == null) {
             throw new IllegalArgumentException("Review cannot be null.");
         }
         reviews.add(review);
     }
-    
+
     public void displayReviews() {
         if (reviews.isEmpty()) {
             System.out.println("No reviews yet.");
@@ -162,12 +143,18 @@ public class Book {
             }
         }
     }
-    
-    public int getBookPrice() {
-    	return this.bookPrice;
+
+    // Display book details
+    public String getDisplayText() {
+        return title + " by " + author + " ISBN: " + isbn + " Publisher: " + publisher + " Publication Date: " + publicationDate + " Price: $" + bookPrice;
     }
-    
-	public String getDisplayText() {
-		return title + " by " + author + " ISBN: " + isbn + " Publisher: " + publisher + " Publication Date: " + publicationDate + " Price: " + bookPrice;
-	}
+
+    // Methods to show available copies
+    public String showAvailableRentalCopies() {
+        return rentableCopies + " rentable copies available";
+    }
+
+    public String showAvailableSaleableCopies() {
+        return saleableCopies + " saleable copies available";
+    }
 }
