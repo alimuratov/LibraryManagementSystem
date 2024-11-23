@@ -12,7 +12,7 @@ public class Customer extends User {
     private Set<Book> purchasedBooks;
     private Set<Review> reviews;
     private Map<String, Double> profileVector;
-    private Librarian librarian = Librarian.getInstance()
+    private LibraryManager libraryManager = LibraryManager.getInstance();
 
     // Constructor
     public Customer(String userName, Password password) {
@@ -72,16 +72,16 @@ public class Customer extends User {
     }
 
     // Public methods to interact with books via Librarian
-    public void rentBook(Librarian librarian, Book book) {
-        librarian.rentBook(this, book);
+    public void rentBook(Book book) {
+        libraryManager.rentBook(this, book);
     }
 
-    public void returnBook(Librarian librarian, Book book) {
-        librarian.returnBook(this, book);
+    public void returnBook(Book book) {
+        libraryManager.returnBook(this, book);
     }
 
-    public void purchaseBook(Librarian librarian, Book book) {
-        librarian.purchaseBook(this, book);
+    public void purchaseBook(Book book) {
+        libraryManager.purchaseBook(this, book);
     }
 
     // Review Methods

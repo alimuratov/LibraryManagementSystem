@@ -1,28 +1,26 @@
 package main.users;
 
 import java.util.*;
-import main.authentication.Password;
 import main.book.Book;
 
-public class Librarian extends User {
-    private static Librarian instance = null;
+public class LibraryManager{
+    private static LibraryManager instance = null;
 
     private Map<String, List<Book>> activeRentals;
     private Map<String, List<Book>> completedRentals;
     private Map<String, List<Book>> purchaseRecords;
 
     // Constructor
-    private Librarian(String userName, Password password) {
-        super(userName, password);
+    private LibraryManager() {
         activeRentals = new HashMap<>();
         completedRentals = new HashMap<>();
         purchaseRecords = new HashMap<>();
     }
 
     // Singleton 
-    public static Librarian getInstance(String userName, Password password) {
+    public static LibraryManager getInstance() {
         if (instance == null) {
-            instance = new Librarian(userName, password);
+            instance = new LibraryManager();
         }
         return instance;
     }
