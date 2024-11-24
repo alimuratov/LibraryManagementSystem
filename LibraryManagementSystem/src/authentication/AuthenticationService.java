@@ -6,21 +6,21 @@ import users.*;
 
 public class AuthenticationService{
     private static Admin admin;
-    private static ArrayList<User> users; // librarians and regular customers have the same login type
+    private static ArrayList<Customer> users; // librarians and regular customers have the same login type
     private static SessionManager sessionManager = SessionManager.getInstance();
 
     public static AuthenticationService instance = new AuthenticationService();
 
     private  AuthenticationService(){
-        AuthenticationService.users = new ArrayList<User>();
+        AuthenticationService.users = new ArrayList<Customer>();
     }
 
     public static AuthenticationService getInstance(){
         return instance;
     }
 
-    private static User findUserByName(String name){
-        for (User customer: users){
+    private static Customer findUserByName(String name){
+        for (Customer customer: users){
                 String username = customer.getUserName();
                 if(username.equals(name))
                     return customer;
@@ -29,7 +29,7 @@ public class AuthenticationService{
             return null;
     }
 
-    public void addUser(User customer){
+    public void addUser(Customer customer){
         users.add(customer);
     }
 
@@ -58,9 +58,9 @@ public class AuthenticationService{
         return false;
     }
 
-    public User login(String name, String parole) throws ExNonExistingUsesrname, ExIncorrectPassword{
+    public Customer login(String name, String parole) throws ExNonExistingUsesrname, ExIncorrectPassword{
         
-        User user = findUserByName(name);
+        Customer user = findUserByName(name);
 
         if(user == null){
             throw new ExNonExistingUsesrname();

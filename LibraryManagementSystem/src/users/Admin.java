@@ -13,9 +13,10 @@ public class Admin extends User {
         super(userName, password);
     }
 
-    public static synchronized Admin getInstance(String userName, Password password) {
+    public static synchronized Admin getInstance() {
         if (instance == null) {
-            instance = new Admin(userName, password);
+            Password password = new Password("Admin123");
+            instance = new Admin("admin", password);
         }
         return instance;
     }
