@@ -80,8 +80,8 @@ public class Customer extends User {
         libraryManager.returnBook(this, book);
     }
 
-    public void purchaseBook(Book book) {
-        libraryManager.purchaseBook(this, book);
+    public void purchaseBook(Book book, String method) {
+        libraryManager.purchaseBook(this, book, method);
     }
 
     // Review Methods

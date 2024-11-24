@@ -1,43 +1,59 @@
 package main.users;
 
 public class Membership {
-    private MembershipState currentState;
+    private MembershipState state;
     private int currentXP;
-    private int maxXP;
-
+    
     // Constructor
     public Membership() {
-        this.currentState = new BronzeMembership();
+        this.state = new BronzeMembershipState();
+        this.state.setMembership(this);
         this.currentXP = 0;
-        this.maxXP = 100;
     }
-
-    // Getters and Setters
+    
+    // State management
+    public void setState(MembershipState newState, int startingXP) { // protected
+        this.state = newState;
+        this.state.setMembership(this);
+        this.currentXP = startingXP;
+        System.out.println("Membership upgraded to " + state.getType() + ". Starting with XP: " + currentXP + "/" + state.getMaxXP());
+    }
+    
+    public MembershipState getState() {
+        return state;
+    }
+    
+    // Getters that delegate to state
+    public String getType() {
+        return state.getType();
+    }
+    
+    public int getMaxRentBooks() {
+        return state.getMaxRentBooks();
+    }
+    
+    public int getRentalDays() {
+        return state.getRentalDays();
+    }
+    
+    public int getWaitlistPriority() {
+        return state.getWaitlistPriority();
+    }
+    
+    public double calculateDiscountedPrice(double originalPrice) {
+        return state.calculateDiscountedPrice(originalPrice);
+    }
+    
+    // XP management
+    public void addXP(int points) {
+        state.addXP(points);
+    }
+    
     public int getCurrentXP() {
         return currentXP;
     }
-
-    public void setCurrentXP(int currentXP) {
-        this.currentXP = currentXP;
-    }
-
-    public int getMaxXP() {
-        return maxXP;
-    }
-
-    public void setMaxXP(int maxXP) {
-        this.maxXP = maxXP;
-    }
-
-    public void setCurrentState(MembershipState state) {
-        this.currentState = state;
-    }
-
-    public void addXP(int points) {
-        currentState.addXP(this, points);
-    }
-
-    public void displayMembershipInfo() {
-        currentState.displayMembershipInfo(this);
+    
+    protected void setCurrentXP(int xp) { // protected
+        this.currentXP = xp;
     }
 }

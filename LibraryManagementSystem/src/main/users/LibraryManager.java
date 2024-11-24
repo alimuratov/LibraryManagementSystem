@@ -149,7 +149,7 @@ public class LibraryManager{
     // PURCHASING
 
     // Purchase a book
-    public void purchaseBook(Customer customer, Book book) {
+    public void purchaseBook(Customer customer, Book book, String method) {
         if (customer == null || book == null) {
             System.out.println("Customer or Book cannot be null.");
             return;
@@ -161,9 +161,9 @@ public class LibraryManager{
 
             // Create Transaction
             String transactionID = UUID.randomUUID().toString();
-            PaymentMethod paymentMethod = PaymentFactory.createPaymentMethod("CreditCard"); // Example payment method
-            RefundMethod refundMethod = PaymentFactory.createRefundMethod("CreditCard");   // Example refund method
-            Transaction transaction = PaymentFactory.createTransaction(transactionID, discountedPrice, "CreditCard", "CreditCard");
+            PaymentMethod paymentMethod = PaymentFactory.createPaymentMethod(method); // Example payment method
+            RefundMethod refundMethod = PaymentFactory.createRefundMethod(method);   // Example refund method
+            Transaction transaction = PaymentFactory.createTransaction(transactionID, discountedPrice, method, method);
 
             // Process Payment
             transaction.processPayment();
@@ -177,7 +177,7 @@ public class LibraryManager{
                 System.out.println("Book purchased successfully: " + book.getDisplayText());
                 System.out.printf("Discounted Price: HK$%.2f\n", discountedPrice);
 
-                processSellingWaitlist(book);
+                processSellingWaitlist(book, method);
             } else {
                 System.out.println("Payment failed. Cannot complete the purchase.");
             }
@@ -188,12 +188,12 @@ public class LibraryManager{
     }
 
     // Process selling waitlist
-    private void processSellingWaitlist(Book book) {
+    private void processSellingWaitlist(Book book, String method) {
         Queue<Customer> sellingWaitList = book.getSellingWaitList();
         while (book.isSalable() && !sellingWaitList.isEmpty()) {
             Customer nextCustomer = sellingWaitList.poll();
             System.out.println("Notifying " + nextCustomer.getUserName() + " about the availability of the book for purchase: " + book.getDisplayText());
-            purchaseBook(nextCustomer, book);
+            purchaseBook(nextCustomer, book, method);
         }
     }
 }

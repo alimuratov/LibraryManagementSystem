@@ -51,36 +51,4 @@ public class Admin extends User {
             System.out.println("Book not found in the library: " + book.getDisplayText());
         }
     }
-
-    /**
-     * Views all books in the library.
-     */
-    public void viewAllBooks() {
-        List<Book> allBooks = Book.getAllBooks();
-        if (allBooks.isEmpty()) {
-            System.out.println("No books are currently available in the library.");
-            return;
-        }
-        System.out.println("All Books in the Library:");
-        for (Book book : allBooks) {
-            System.out.println(book.getDisplayText());
-        }
-    }
-
-    /**
-     * Views all reviews for a specific book.
-     *
-     * @param book The book whose reviews are to be viewed.
-     */
-    public void viewBookReviews(Book book) {
-        List<Book> allBooks = Book.getAllBooks();
-        if (!allBooks.contains(book)) {
-            System.out.println("Book not managed by admin: " + book.getDisplayText());
-            return;
-        }
-        System.out.println("Reviews for " + book.getDisplayText() + ":");
-        book.displayReviews();
-    }
-
-    // Additional methods will be added here
 }
