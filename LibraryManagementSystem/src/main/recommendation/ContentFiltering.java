@@ -1,256 +1,162 @@
 package main.recommendation;
 
+
 import java.util.List;
 import java.util.Map;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.HashSet;
 
-import main.book.Book;
-import main.users.Customer;
+import main.users.*;
+import main.book.*;
 
 public class ContentFiltering extends RecommendationStrategyBase {
-		
-	// shared data structures
-	private Map<String, Map<String, Double>> tfDict = new HashMap<>();
-	private Map<String, Double> idfDict = new HashMap<>();
-	private Map<String, Map<String, Double>> tfIdfDict = new HashMap<>();
-	private Set<String> corpus = new HashSet<>();
-	private Map<String, Integer> termDocumentFreq = new HashMap<>();
 	
-	public static void printTfIdfDict(Map<String, Map<String, Double>> tfIdfDict) {
-	    for (Map.Entry<String, Map<String, Double>> outerEntry : tfIdfDict.entrySet()) {
-	        String key = outerEntry.getKey();
-	        Map<String, Double> innerMap = outerEntry.getValue();
-
-	        System.out.printf("Key: %s%n", key);
-	        System.out.println("Values:");
-	        for (Map.Entry<String, Double> innerEntry : innerMap.entrySet()) {
-	            String innerKey = innerEntry.getKey();
-	            Double value = innerEntry.getValue();
-	            System.out.printf("  %s: %.4f%n", innerKey, value);
-	        }
-	        System.out.println();
-	    }
-	}
-	
-	public static void printProfileVector(Map<String, Double> profileVector) {
-		
-		System.out.println("_______________"); 
-		
-		if (profileVector.isEmpty()) {
-		    System.out.println("The profile vector is empty.");
-		} else {
-		    System.out.println("The profile vector is not empty.");
-		}
-		
-		for(Map.Entry<String, Double> entry : profileVector.entrySet()) {
-			String term = entry.getKey();
-			Double tfIdfVal = entry.getValue();
-			System.out.printf("  %s: %.4f%n", term, tfIdfVal);
-		}
-		System.out.println();
-	}
+	private TfIdfProcessor tfIdfProcessor;
 		
 	public ContentFiltering(Data data) {
         super(data);
+        this.tfIdfProcessor = new TfIdfProcessor(this.getBooks());
     }
 	
-	private void tfIdfPreprocessing() {
-		createTfIdfSeparately();
-		computeTfIdfVectors();
+	@Override
+	protected boolean isUserReadyForRecommendation(Customer user) {
+		return user.getProfileVector() != null;
 	}
 	
-	public Book[] getBooksSimilarToCustomerProfile(Customer customer, int numberOfRecommendations) {
+	@Override
+	protected void preprocessForUser(Customer user) {
+		tfIdfPreprocessing();
+		Map<String, Double> profileVector = createUserProfile(user);
+		user.setProfileVector(profileVector);
+	}
+	
+	public void tfIdfPreprocessing() {
+		tfIdfProcessor.createTfIdfSeparately();
+		tfIdfProcessor.computeTfIdfVectors();
+	}
+	
+	private Map<Book, Double> computeBookSimilarities(Customer user) {
 		Map<Book, Double> bookSimilarities = new HashMap<>();
-		Map<String, Double> profileVector = customer.getProfileVector();
-		
-		printProfileVector(profileVector);
+		Map<String, Double> profileVector = user.getProfileVector();
 		
 		for (Book book : books) {
-			if (!data.isBookRatedByCustomer(book, customer)) {
-				double similarity = cosineSimilarity(tfIdfDict.get(book.getBookTitle()), profileVector);
-				System.out.printf("Book: %s, Similarity with customer profile: %f", book, similarity);
+			if (!data.isBookRatedByUser(book, user)) {
+				Map<String, Double> bookVector = tfIdfProcessor.getTfIdfVectorForBook(book.getBookTitle());
+				double similarity = tfIdfProcessor.cosineSimilarity(bookVector, profileVector);
 				bookSimilarities.put(book, similarity);
 			}
 		}
 		
-		Book[] recommendations = bookSimilarities.entrySet() 
-    			.stream() 
-    			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-    			.limit(numberOfRecommendations)
-    			.map(Map.Entry::getKey) 
-    			.toArray(Book[]::new); 
-		
-		/* for (Book book: recommendations) {
-			System.out.println(book);
-		} */
-		
-		return recommendations;
+		return bookSimilarities;
 	}
 	
-	@Override
-	public Book[] getRecommendations(Customer customer, int numberOfRecommendations) {	
-		if (customer.getProfileVector() == null) {
-			tfIdfPreprocessing();
-			Map<String, Double> profileVector = createCustomerProfile(customer);
-			customer.setProfileVector(profileVector);
-		}
-		
-		printTfIdfDict(tfIdfDict);
-		
-		return getBooksSimilarToCustomerProfile(customer, numberOfRecommendations);
+	private int adjustNumberOfRecommendations(int availableRecommendations, int requestedNumber) {
+		if (availableRecommendations < requestedNumber) {
+            System.out.println("Requested number of recommendations exceeds the number of available books.");
+            return availableRecommendations;
+        }
+        return requestedNumber;
+	}
+	
+	private Book[] getTopRecommendedBooks(Map<Book, Double> bookSimilarities, int numberOfRecommendations) {
+        return bookSimilarities.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(numberOfRecommendations)
+                .map(Map.Entry::getKey)
+                .toArray(Book[]::new);
     }
 	
-	public void createTfIdfSeparately() {
-		for (Book book : books) {
-			Map<String, Integer> termCounter = new HashMap<>();
-			String bookDescription = book.getBookDescription();
-			
-			// remove punctuation marks
-			String cleanedBookDescription = bookDescription.replaceAll("[^\\w\\s]", "");
-			
-			// split descriptions into words
-			String[] terms = cleanedBookDescription.split("\\s+");
-			
-			int totalTermsInDoc = terms.length; 
-			
-			Set<String> seenTerms = new HashSet<>();
-			
-			for (String term : terms) {
-				termCounter.put(term, termCounter.getOrDefault(term, 0) + 1);
-				corpus.add(term);
-				
-				if (!seenTerms.contains(term)) {
-					termDocumentFreq.put(term, termDocumentFreq.getOrDefault(term, 0) + 1);
-					seenTerms.add(term);
-				}
-				
-			}
-			
-			Map<String, Double> tf_entry = new HashMap<>();
-			for (Map.Entry<String, Integer> termEntry : termCounter.entrySet()) {
-				double tf = (double) termEntry.getValue() / totalTermsInDoc;
-				tf_entry.put(termEntry.getKey(), tf);
-			}
-			tfDict.put(book.getBookTitle(), tf_entry);
-
-		}
+	@Override
+	protected Book[] generateRecommendations(Customer user, int numberOfRecommendations) {	
+		Map<Book, Double> bookSimilarities = computeBookSimilarities(user); 
 		
-		int totalDocuments = books.size();
-		for (String term : corpus) {
-			int docFreq = termDocumentFreq.get(term);
-			double idf = (double) totalDocuments / docFreq;
-			idfDict.put(term, idf);
-		}
+		if (bookSimilarities.isEmpty()) {
+			System.out.println("No recommendations available. You may have already rated all the books.");
+			return new Book[0];
+		} 
 		
-	}
-	
-	// computes tfIdf vectors of each book
-	public void computeTfIdfVectors() {
-		for (Book book : books) {
-			Map<String, Double> tfEntry = tfDict.get(book.getBookTitle());
-			Map<String, Double> tfIdfEntry = new HashMap<>();
-			
-			for (String term : corpus) {
-				double tf = tfEntry.getOrDefault(term, 0.0);
-				double idf = idfDict.get(term);
-				tfIdfEntry.put(term, tf*idf);
-			}
-			
-			tfIdfDict.put(book.getBookTitle(), normalizeVector(tfIdfEntry));
-		}
-	}
+		numberOfRecommendations = adjustNumberOfRecommendations(bookSimilarities.size(), numberOfRecommendations);
+		
+		return getTopRecommendedBooks(bookSimilarities, numberOfRecommendations);
+    }
 	
 	public double cosineSimilarity(Map<String, Double> vec1, Map<String, Double> vec2) {
-		Set<String> intersection = new HashSet<>(vec1.keySet());
-		intersection.retainAll(vec2.keySet());
-		
-		double dotProduct = 0.0;
-		double vec1Norm = 0.0;
-		double vec2Norm = 0.0;
-		
-		for (String term : intersection) {
-			double val1 = vec1.get(term);
-			double val2 = vec2.get(term);
-			
-			dotProduct += val1 * val2;
-		}
-		
-		for (double value : vec1.values()) {
-			vec1Norm += value * value;
-		}
-		vec1Norm = Math.sqrt(vec1Norm);
-		
-		for (double value : vec2.values()) {
-			vec2Norm += value * value; 
-		}
-		vec2Norm = Math.sqrt(vec2Norm);
-		
-		if (vec1Norm == 0 || vec2Norm == 0) {
-			return 0.0;
-		}
-		
-		return dotProduct / (vec1Norm * vec2Norm);
+		return tfIdfProcessor.cosineSimilarity(vec1, vec2);
 	}
 	
-	public Map<String, Double> createCustomerProfile(Customer customer) {
-		List<String> preferredBookTitles = getPreferredBookTitles(customer);
-		
-		Map<String, Double> customerProfile = new HashMap<>();
-		
-		for (String bookTitle : preferredBookTitles) {
-			Map<String, Double> tfIdfEntry = tfIdfDict.get(bookTitle);
-			
-			for (String term : tfIdfEntry.keySet()) {
-				double existingValue = customerProfile.getOrDefault(term, 0.0);
-				customerProfile.put(term, existingValue + tfIdfEntry.get(term));
-			}
-		}
-		
-		return normalizeVector(customerProfile); 
+	public Map<String, Double> createUserProfile(Customer user) {
+		List<String> preferredBookNames = getPreferredBookNames(user);
+		Map<String, Double> userProfile = tfIdfProcessor.aggregateTfIdfVectors(preferredBookNames);
+		return tfIdfProcessor.normalizeVector(userProfile); 
 	}
 	
-	public List<String> getPreferredBookTitles(Customer customer) {
-		List<String> preferredBookTitles = new ArrayList<>();
-		
-		if (customerRatings == null || !customerRatings.containsKey(customer)) {
-			return preferredBookTitles;
+	public List<String> getPreferredBookNames(Customer user) {		
+		if (userRatings == null || !userRatings.containsKey(user)) {
+			return Collections.emptyList();
 		}
 		
-		Map<Book, BigDecimal> currentCustomerRatings = customerRatings.get(customer);
-		if(currentCustomerRatings == null) {
-			return preferredBookTitles;
+		Map<Book, BigDecimal> currentUserRatings = userRatings.get(user);
+		if(currentUserRatings == null) {
+			return Collections.emptyList();
 		}
 		
-		for (Map.Entry<Book, BigDecimal> bookRatingEntry : currentCustomerRatings.entrySet()) {
-			if (bookRatingEntry.getValue().compareTo(BigDecimal.valueOf(4)) >= 0) {
-				preferredBookTitles.add(bookRatingEntry.getKey().getBookTitle());
-			}		
-		}
-		
-		return preferredBookTitles;
+		return currentUserRatings.entrySet().stream()
+				.filter(entry -> entry.getValue().compareTo(BigDecimal.valueOf(4))>=0)
+				.map(entry -> entry.getKey().getBookTitle())
+				.collect(Collectors.toList());
 	}
 	
 	public Map<String, Double> normalizeVector(Map<String, Double> vector) {
-		double norm = 0.0;
-		for (double value : vector.values()) {
-			norm += value * value;
-		}
-		norm = Math.sqrt(norm);
-		if (norm == 0) { 
-			return vector;
-		}
-		Map<String, Double> normalized = new HashMap<>();
-		for (Map.Entry<String, Double> entry : vector.entrySet()) {
-			normalized.put(entry.getKey(), entry.getValue() / norm);
-		}
-		return normalized;
+		return tfIdfProcessor.normalizeVector(vector);
 	}
 	
+	// getters and setters
 	
+	public void setNewData(Data data) {
+		this.data = data;
+		this.userRatings = data.getUserRatings();
+		this.books = data.getBooks();
+	}
+	
+	public List<Book> getBooks() {
+		return books;
+	}
+	
+	// for testing
+	public Map<String, Map<String, Double>> getTfIdfDict() {
+		return tfIdfProcessor.getTfIdfDict();
+	}
+	
+	public Set<String> getCorpus() {
+		return tfIdfProcessor.getCorpus();
+	}
+	
+	public Map<String, Integer> getTermDocumentFreq() {
+		return tfIdfProcessor.getTermDocumentFreq();
+	}
+	
+	public Map<String, Map<String, Double>> getTfDict() {
+		return tfIdfProcessor.getTfDict();
+	}	
+	
+	public Map<String, Double> getIdfDict() {
+		return tfIdfProcessor.getIdfDict();
+	}
+	
+	public void createTfIdfSeparately() {
+		tfIdfProcessor.createTfIdfSeparately();
+	}
+	
+	public void computeTfIdfVectors() {
+		tfIdfProcessor.computeTfIdfVectors();
+	}
 	
 }

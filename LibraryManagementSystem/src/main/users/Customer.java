@@ -22,6 +22,22 @@ public class Customer extends User {
         this.purchasedBooks = new HashSet<>();
         this.reviews = new HashSet<>();
     }
+    
+    public Customer(String userName) {
+		super(userName, new Password("defaultPassword"));
+        this.membership = new Membership();
+        this.rentedBooks = new HashSet<>();
+        this.purchasedBooks = new HashSet<>();
+        this.reviews = new HashSet<>();
+	}
+    
+    public Customer(String userName, Integer id) {
+    	super(userName, id);
+    	this.membership = new Membership();
+        this.rentedBooks = new HashSet<>();
+        this.purchasedBooks = new HashSet<>();
+        this.reviews = new HashSet<>();
+	}
 
     // Getters
     public Membership getMembership() {

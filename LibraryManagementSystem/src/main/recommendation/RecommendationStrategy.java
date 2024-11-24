@@ -2,7 +2,10 @@ package main.recommendation;
 
 import main.book.*;
 import main.users.*;
+import main.exceptions.*;
 
 public interface RecommendationStrategy {
-	Book[] getRecommendations(Customer customer, int numberOfRecommendations);
+	Book[] getRecommendations(Customer user, int numberOfRecommendations) 
+			throws UserRatingsNotFound,
+				   BookNotFoundException;
 }

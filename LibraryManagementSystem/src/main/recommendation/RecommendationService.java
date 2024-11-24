@@ -10,10 +10,10 @@ public class RecommendationService {
 		this.strategy = strategy;
 	}
 	
-	public Book[] getRecommendations(Customer customer, int numberOfRecommendations) {
+	public Book[] getRecommendations(Customer user, int numberOfRecommendations) {
 		if(strategy == null) {
-			// do something
+			System.out.println("Set the recommendation strategy.");
 		}
-		return strategy.getRecommendations(customer, numberOfRecommendations);
+		return strategy.getRecommendations(user, numberOfRecommendations);
 	}
 }
