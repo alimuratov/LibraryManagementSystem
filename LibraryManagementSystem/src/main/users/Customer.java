@@ -45,10 +45,6 @@ public class Customer extends User {
     }
 
     // Setters
-    public void upgradeMembership(MembershipType membershipType) {
-        this.membership = new Membership();
-    }
-
     public void setProfileVector(Map<String, Double> profileVector) {
         this.profileVector = profileVector;
     }
