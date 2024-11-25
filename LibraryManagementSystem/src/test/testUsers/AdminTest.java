@@ -3,7 +3,6 @@ package test.testUsers;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import main.book.Book;
-import main.authentication.Password;
 import java.util.List;
 
 import main.users.Admin;
