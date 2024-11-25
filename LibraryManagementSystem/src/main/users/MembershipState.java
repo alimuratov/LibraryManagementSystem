@@ -20,13 +20,11 @@ public abstract class MembershipState {
         return originalPrice * (1 - getPurchaseDiscount());
     }
     
-    protected void handleXPOverflow(int totalXP) {
+    public void handleXPOverflow(int totalXP) {
         if (totalXP >= getMaxXP()) {
             int excessXP = totalXP - getMaxXP();
             MembershipState nextState = getNextState();
-            if (nextState != null) {
-                membership.setState(nextState, excessXP);
-            }
+            membership.setState(nextState, excessXP);
         }
     }
 }

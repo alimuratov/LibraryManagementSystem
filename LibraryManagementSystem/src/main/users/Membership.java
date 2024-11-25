@@ -12,11 +12,17 @@ public class Membership {
     }
     
     // State management
-    public void setState(MembershipState newState, int startingXP) { // protected
+    public void setState(MembershipState newState, int startingXP) {
         this.state = newState;
         this.state.setMembership(this);
         this.currentXP = startingXP;
-        System.out.println("Membership upgraded to " + state.getType() + ". Starting with XP: " + currentXP + "/" + state.getMaxXP());
+        
+        // Only print XP message if not Gold state
+        if (!(newState instanceof GoldMembershipState)) {
+            System.out.println("Membership upgraded to " + state.getType() + ". Starting with XP: " + currentXP + "/" + state.getMaxXP());
+        } else {
+            System.out.println("Membership upgraded to " + state.getType() + ".");
+        }
     }
     
     public MembershipState getState() {

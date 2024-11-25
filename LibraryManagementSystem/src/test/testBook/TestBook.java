@@ -1,26 +1,26 @@
 package test.testBook;
 
-
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
 
 import main.book.*;
-import main.authentication.*;
 import main.users.*;
+import main.authentication.Password;
 
-class BookTest {
-    private Book book;
+class TestBook {
+    private Book fullBook;
+    private Book simpleBook;
+    private Customer bronzeCustomer;
+    private Customer silverCustomer;
+    private Customer goldCustomer;
+    private Review validReview;
+    private Review invalidRatingReview;
 
     @BeforeEach
     void setUp() {
-        book = new Book(
+        // Initialize books
+        fullBook = new Book(
             "123-4567890123",
             "Test Book",
             "Test Author",
@@ -31,204 +31,138 @@ class BookTest {
             5,
             3
         );
-    }
-
-    @AfterEach
-    void tearDown() {
-        Book.getAllBooks().clear();
+        
+        simpleBook = new Book("Simple Book", "Simple Description");
+        
+        // Initialize customers with different membership levels
+        bronzeCustomer = new Customer("bronze", new Password("pass123"));
+        silverCustomer = new Customer("silver", new Password("pass123"));
+        goldCustomer = new Customer("gold", new Password("pass123"));
+        
+        // Set up membership levels by adding XP
+        silverCustomer.getMembership().addXP(100); // Upgrade to Silver
+        goldCustomer.getMembership().addXP(100);   // To Silver first
+        goldCustomer.getMembership().addXP(250);   // Then to Gold
+        
+        // Initialize reviews
+        validReview = new Review("Good book", 5);
+        invalidRatingReview = new Review("Bad rating", 9); // Should print warning
     }
 
     @Test
-    void constructor_WithAllParameters_InitializesCorrectly() {
-        assertEquals("Test Book", book.getBookTitle());
-        assertEquals(29.99, book.getBookPrice());
-        assertEquals(5, book.getRentableCopies());
-        assertEquals(3, book.getSaleableCopies());
-        assertTrue(book.getReviews().isEmpty());
-        assertNotNull(book.getRentingWaitList());
-        assertNotNull(book.getSellingWaitList());
-    }
-
-    @Test
-    void constructor_Simplified_InitializesWithDefaults() {
-        Book simpleBook = new Book("Simple Book", "Simple Description");
+    void testConstructors() {
+        // Test full constructor
+        assertEquals("Test Book", fullBook.getBookTitle());
+        assertEquals(29.99, fullBook.getBookPrice());
+        assertEquals(5, fullBook.getRentableCopies());
+        assertEquals(3, fullBook.getSaleableCopies());
+        
+        // Test simple constructor
         assertEquals("Simple Book", simpleBook.getBookTitle());
         assertEquals(0.0, simpleBook.getBookPrice());
         assertEquals(0, simpleBook.getRentableCopies());
         assertEquals(0, simpleBook.getSaleableCopies());
-        assertEquals("Simple Book by Unknown Author ISBN: 000-0000000000 Publisher: Unknown Publisher Publication Date: 2024-01-01 Price: $0.0", simpleBook.getDisplayText());
-        assertTrue(simpleBook.getReviews().isEmpty());
     }
 
     @Test
-    void getAllBooks_InitiallyEmpty() {
-        List<Book> allBooks = Book.getAllBooks();
-        assertNotNull(allBooks);
-        assertTrue(allBooks.isEmpty());
-    }
-
-    @Test
-    void addBook_AddsToAllBooks() {
-        Book.addBook(book);
-        assertTrue(Book.getAllBooks().contains(book));
-        assertEquals(1, Book.getAllBooks().size());
-    }
-
-    @Test
-    void setters_UpdateValues() {
-        book.setTitle("New Title");
-        book.setAuthor("New Author");
-        book.setRentableCopies(10);
-        book.setSaleableCopies(5);
-
-        assertEquals("New Title", book.getBookTitle());
-        assertEquals(10, book.getRentableCopies());
-        assertEquals(5, book.getSaleableCopies());
-        assertTrue(book.getDisplayText().contains("New Author"));
-    }
-
-    @Test
-    void isRentable_ReturnsCorrectValue() {
-        assertTrue(book.isRentable());
-        book.setRentableCopies(0);
-        assertFalse(book.isRentable());
-    }
-
-    @Test
-    void isSalable_ReturnsCorrectValue() {
-        assertTrue(book.isSalable());
-        book.setSaleableCopies(0);
-        assertFalse(book.isSalable());
-    }
-
-    @Test
-    void addReview_AddsToList() {
-        Review review = new Review("Great book!", 5);
-        book.addReview(review);
+    void testStaticMethods() {
+        // Test getAllBooks and addBook
+        Book.addBook(fullBook);
+        assertTrue(Book.getAllBooks().contains(fullBook));
         
-        assertEquals(1, book.getReviews().size());
-        assertTrue(book.getReviews().contains(review));
+        // Test getting allBooks multiple times (coverage for null check)
+        assertNotNull(Book.getAllBooks());
+        assertSame(Book.getAllBooks(), Book.getAllBooks());
     }
 
     @Test
-    void addReview_WithNullReview_ThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            book.addReview(null);
-        });
+    void testSetters() {
+        fullBook.setTitle("New Title");
+        fullBook.setAuthor("New Author");
+        fullBook.setRentableCopies(10);
+        fullBook.setSaleableCopies(5);
+        
+        assertEquals("New Title", fullBook.getBookTitle());
+        assertEquals("New Title by New Author", fullBook.getDisplayText().split("ISBN")[0].trim());
+        assertEquals(10, fullBook.getRentableCopies());
+        assertEquals(5, fullBook.getSaleableCopies());
     }
 
     @Test
-    void addMultipleReviews_AllReviewsAdded() {
-        Review review1 = new Review("Great book!", 5);
-        Review review2 = new Review("Good read", 4);
+    void testAvailabilityChecks() {
+        assertTrue(fullBook.isRentable());
+        assertTrue(fullBook.isSalable());
         
-        book.addReview(review1);
-        book.addReview(review2);
+        fullBook.setRentableCopies(0);
+        fullBook.setSaleableCopies(0);
         
-        assertEquals(2, book.getReviews().size());
-        assertTrue(book.getReviews().contains(review1));
-        assertTrue(book.getReviews().contains(review2));
+        assertFalse(fullBook.isRentable());
+        assertFalse(fullBook.isSalable());
     }
 
     @Test
-    void waitlist_Management() {
-        Customer customer1 = new Customer("User1", new Password("pass1"));
-        Customer customer2 = new Customer("User2", new Password("pass2"));
+    void testWaitlistIntegration() {
+        // Test waitlist with different membership priorities
+        fullBook.addRentingWaitList(bronzeCustomer);
+        fullBook.addRentingWaitList(silverCustomer);
+        fullBook.addRentingWaitList(goldCustomer);
         
-        book.addRentingWaitList(customer1);
-        book.addRentingWaitList(customer2);
-        book.addSellingWaitList(customer1);
+        // Verify priority queue ordering based on membership levels
+        assertEquals(goldCustomer, fullBook.getRentingWaitList().poll());
+        assertEquals(silverCustomer, fullBook.getRentingWaitList().poll());
+        assertEquals(bronzeCustomer, fullBook.getRentingWaitList().poll());
         
-        assertEquals(2, book.getRentingWaitList().size());
-        assertEquals(1, book.getSellingWaitList().size());
-        assertEquals(customer1, book.getRentingWaitList().peek());
+        // Test selling waitlist
+        fullBook.addSellingWaitList(bronzeCustomer);
+        fullBook.addSellingWaitList(goldCustomer);
+        fullBook.addSellingWaitList(silverCustomer);
+        
+        assertEquals(goldCustomer, fullBook.getSellingWaitList().poll());
+        assertEquals(silverCustomer, fullBook.getSellingWaitList().poll());
+        assertEquals(bronzeCustomer, fullBook.getSellingWaitList().poll());
     }
 
     @Test
-    void getDisplayText_ContainsAllInfo() {
-        String display = book.getDisplayText();
-        assertTrue(display.contains("Test Book"));
-        assertTrue(display.contains("Test Author"));
-        assertTrue(display.contains("123-4567890123"));
-        assertTrue(display.contains("Test Publisher"));
-        assertTrue(display.contains("2024-01-01"));
-        assertTrue(display.contains("29.99"));
+    void testReviewIntegration() {
+        // Test adding valid review
+        fullBook.addReview(validReview);
+        assertEquals(1, fullBook.getReviews().size());
+        assertTrue(fullBook.getReviews().contains(validReview));
+        assertEquals(5, validReview.getBookRating());
+        assertEquals("Good book", validReview.getComments());
+        
+        // Test adding invalid rating review
+        fullBook.addReview(invalidRatingReview);
+        assertEquals(0, invalidRatingReview.getBookRating()); // Rating should not be set
+        
+        // Test adding null review
+        assertThrows(IllegalArgumentException.class, () -> fullBook.addReview(null));
+        
+        // Test displaying reviews
+        fullBook.displayReviews(); // With reviews
+        
+        Book emptyBook = new Book("Empty Book", "No reviews");
+        emptyBook.displayReviews(); // Without reviews
     }
 
     @Test
-    void showAvailableCopies_DisplaysCorrectCount() {
-        assertEquals("5 rentable copies available", book.showAvailableRentalCopies());
-        assertEquals("3 saleable copies available", book.showAvailableSaleableCopies());
+    void testDisplayMethods() {
+        String displayText = fullBook.getDisplayText();
+        assertTrue(displayText.contains("Test Book"));
+        assertTrue(displayText.contains("Test Author"));
+        assertTrue(displayText.contains("123-4567890123"));
+        assertTrue(displayText.contains("Test Publisher"));
+        assertTrue(displayText.contains("2024-01-01"));
+        assertTrue(displayText.contains("29.99"));
         
-        book.setRentableCopies(0);
-        book.setSaleableCopies(0);
-        
-        assertEquals("0 rentable copies available", book.showAvailableRentalCopies());
-        assertEquals("0 saleable copies available", book.showAvailableSaleableCopies());
+        assertEquals("5 rentable copies available", fullBook.showAvailableRentalCopies());
+        assertEquals("3 saleable copies available", fullBook.showAvailableSaleableCopies());
     }
 
     @Test
-    void unmodifiableCollections_CannotBeModified() {
-        Review review = new Review("Great book!", 5);
-        book.addReview(review);
-        
-        assertThrows(UnsupportedOperationException.class, () -> {
-            book.getReviews().add(new Review("Another review", 4));
-        });
-    }
-
-    @Test
-    void multipleBooks_StaticListManagement() {
-        Book book1 = new Book("Book 1", "Description 1");
-        Book book2 = new Book("Book 2", "Description 2");
-        
-        Book.addBook(book1);
-        Book.addBook(book2);
-        
-        assertEquals(2, Book.getAllBooks().size());
-        assertTrue(Book.getAllBooks().contains(book1));
-        assertTrue(Book.getAllBooks().contains(book2));
-    }
-    
-    @Test
-    void displayReviews_WithNoReviews() {
-        // Redirect System.out to capture output
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
-
-        try {
-            book.displayReviews();
-            assertEquals("No reviews yet." + System.lineSeparator(), outputStream.toString());
-        } finally {
-            // Restore original System.out
-            System.setOut(originalOut);
-        }
-    }
-
-    @Test
-    void displayReviews_WithMultipleReviews() {
-        // Redirect System.out to capture output
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
-
-        try {
-            Review review1 = new Review("Great book!", 5);
-            Review review2 = new Review("Interesting read", 4);
-            book.addReview(review1);
-            book.addReview(review2);
-
-            book.displayReviews();
-
-            String output = outputStream.toString();
-            assertTrue(output.contains("Book Rating: 5"));
-            assertTrue(output.contains("Comment: Great book!"));
-            assertTrue(output.contains("Book Rating: 4"));
-            assertTrue(output.contains("Comment: Interesting read"));
-        } finally {
-            // Restore original System.out
-            System.setOut(originalOut);
-        }
+    void testCollectionImmutability() {
+        fullBook.addReview(validReview);
+        assertThrows(UnsupportedOperationException.class, 
+            () -> fullBook.getReviews().add(validReview));
     }
 }

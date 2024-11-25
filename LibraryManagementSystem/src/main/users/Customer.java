@@ -50,20 +50,20 @@ public class Customer extends User {
     }
 
     // Methods to manage rented books (now called internally)
-    protected void addRentedBook(Book book) {
+    public void addRentedBook(Book book) {
         rentedBooks.add(book);
     }
 
-    protected void removeRentedBook(Book book) {
+    public void removeRentedBook(Book book) {
         rentedBooks.remove(book);
     }
 
     // Methods to manage purchased books (now called internally)
-    protected void addPurchasedBook(Book book) {
+    public void addPurchasedBook(Book book) {
         purchasedBooks.add(book);
     }
 
-    protected void removePurchasedBook(Book book) {
+    public void removePurchasedBook(Book book) {
         purchasedBooks.remove(book);
     }
 

@@ -39,6 +39,11 @@ public class LibraryManager{
             System.out.println("Customer or Book cannot be null.");
             return;
         }
+        
+        if (customer.getRentedBooks().contains(book)) {
+            System.out.println("You already have this book rented: " + book.getDisplayText());
+            return;
+        }
 
         if (customer.getMembership().getMaxRentBooks() <= customer.getRentedBooks().size()) {
             System.out.println("You have reached your rental limit.");
@@ -82,6 +87,7 @@ public class LibraryManager{
                 RentalRecord record = recordIterator.next();
                 if (record.getCustomer().equals(customer) && record.getBook().equals(book) && !record.isReturned()) {
                     record.markAsReturned();
+                    customer.getMembership().addXP(10);
 
                     recordIterator.remove();
                     if (records.isEmpty()) {
@@ -125,10 +131,12 @@ public class LibraryManager{
             // completedRentals.computeIfAbsent(record.getCustomer().getUserID(), k -> new ArrayList<>()).add(record);
 
             Book book = record.getBook();
-            book.setRentableCopies(book.getRentableCopies() + 1);
-
             Customer customer = record.getCustomer();
+            
+            book.setRentableCopies(book.getRentableCopies() + 1);
             customer.removeRentedBook(book);
+            customer.getMembership().addXP(10);
+            
 
             System.out.println("Book returned automatically: " + book.getDisplayText() + " by " + customer.getUserName());
 
@@ -154,6 +162,11 @@ public class LibraryManager{
             System.out.println("Customer or Book cannot be null.");
             return;
         }
+        
+        if (customer.getPurchasedBooks().contains(book)) {
+            System.out.println("You already own this book: " + book.getDisplayText());
+            return;
+        }
 
         if (book.isSalable()) {
             double originalPrice = book.getBookPrice();
@@ -171,6 +184,7 @@ public class LibraryManager{
                 book.setSaleableCopies(book.getSaleableCopies() - 1);
 
                 customer.addPurchasedBook(book);
+                customer.getMembership().addXP(20);
 
                 // purchaseRecords.computeIfAbsent(customer.getUserID(), k -> new ArrayList<>()).add(book);
 
