@@ -179,6 +179,24 @@ public class Book {
 		this.bookDescription = bookDescription;
 	}
     
+    public List<Book> search(String searchString) {
+   	 String[] tokens = searchString.split("[\\p{Punct}\\s]+"); // reg ex that matches one or more punctuation marks
+   	 
+   	 List<Book> result = new ArrayList<>();
+   	 
+   	 for (Book book : allBooks) {
+   		 String bookDescription = book.getBookDescription().toLowerCase();
+   		 for (String token : tokens) {
+   			 if (bookDescription.contains(token.toLowerCase())) {
+   				 result.add(book);
+   				 break;
+   			 }
+   		 }
+   	 }
+   	 
+   	 return result;
+   }
+    
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
