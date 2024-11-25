@@ -15,7 +15,7 @@ import main.book.*;
 import main.authentication.*;
 import main.users.*;
 
-class BookTest {
+class TestBook {
     private Book book;
 
     @BeforeEach
