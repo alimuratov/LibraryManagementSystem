@@ -374,6 +374,16 @@ public class Main {
 	}
 	
 	private static void rateBook(Scanner scanner) {
-		Map<Customer, Map<Book, BigDecimal>> userRatings = new HashMap<>(); 
+		Map<Customer, Map<Book, BigDecimal>> userRatings = data.getUserRatings();
+		List<Book> books = new ArrayList<>(userRatings.get(customer).keySet());
+		
+		for (int i = 0; i < books.size(); i++) {
+			Book book = books.get(i);
+			System.out.println(i + ". " + book.getBookTitle());
+		}
+		
+			
+		
+		
 	} 
 }
