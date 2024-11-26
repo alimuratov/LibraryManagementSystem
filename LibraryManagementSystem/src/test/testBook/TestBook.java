@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -230,5 +232,74 @@ class TestBook {
             // Restore original System.out
             System.setOut(originalOut);
         }
+    }
+    
+    @Test 
+    void testSearch_BasicSearch() {
+    	Book book1 = new Book("Book1", "The quick brown fox");
+    	Book book2 = new Book("Book2", "Lazy dog jumps over");
+    	Book book3 = new Book("Book3", "Quick movements in the wild");
+    	
+    	Book.addBook(book1);
+    	Book.addBook(book2);
+    	Book.addBook(book3);
+    	
+		List<Book> expected = Arrays.asList(book1, book3);
+		assertEquals(expected, Book.search("quick"));
+    }
+    
+    @Test
+    void testSeach_CaseSensitivity() {
+    	Book book1 = new Book("Book1", "The quick brown fox");
+    	Book book2 = new Book("Book2", "Lazy dog jumps over");
+    	Book book3 = new Book("Book3", "Quick movements in the wild");
+    	
+    	Book.addBook(book1);
+    	Book.addBook(book2);
+    	Book.addBook(book3);
+    	
+		List<Book> expected = Arrays.asList(book1, book3);
+		assertEquals(expected, Book.search("QUiCk"));
+    }
+    
+    @Test
+    void testSearch_Punctuations() {
+    	Book book1 = new Book("Book1", "The quick!!; brown fox");
+    	Book book2 = new Book("Book2", "Lazy dog;; jumps. over");
+    	Book book3 = new Book("Book3", "Quick movements, in; the! wild");
+    	
+    	Book.addBook(book1);
+    	Book.addBook(book2);
+    	Book.addBook(book3);
+    	
+		List<Book> expected = Arrays.asList(book1, book3);
+		assertEquals(expected, Book.search("QUiCk"));
+    }
+    
+    @Test
+    void testSearch_noMatches() {
+    	Book book1 = new Book("Book1", "The quick!!; brown fox");
+    	Book book2 = new Book("Book2", "Lazy dog;; jumps. over");
+    	Book book3 = new Book("Book3", "Quick movements, in; the! wild");
+    	
+    	Book.addBook(book1);
+    	Book.addBook(book2);
+    	Book.addBook(book3);
+    	
+		assertEquals(Collections.emptyList(), Book.search("wolf"));
+    }
+    
+    @Test
+    void testSearch_emptyString() {
+    	Book book1 = new Book("Book1", "The quick!!; brown fox");
+    	Book book2 = new Book("Book2", "Lazy dog;; jumps. over");
+    	Book book3 = new Book("Book3", "Quick movements, in; the! wild");
+    	
+    	Book.addBook(book1);
+    	Book.addBook(book2);
+    	Book.addBook(book3);
+    	
+		List<Book> expected = Arrays.asList(book1, book2, book3);
+		assertEquals(expected, Book.search(""));
     }
 }

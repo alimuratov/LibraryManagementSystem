@@ -8,4 +8,6 @@ public interface RecommendationStrategy {
 	Book[] getRecommendations(Customer user, int numberOfRecommendations) 
 			throws UserRatingsNotFound,
 				   BookNotFoundException;
+	
+	Data getData(); 
 }
