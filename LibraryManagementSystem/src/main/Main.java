@@ -40,7 +40,6 @@ public class Main {
 			switch (response) {
 			case 1:
 			case 2:
-				userInitialization();
 				mainMenu(scanner);
 				break;
 			case 3:
@@ -96,17 +95,6 @@ public class Main {
 	    service = new RecommendationService();
 	}
 	
-	private static void userInitialization() {
-		Map<Customer, Map<Book, BigDecimal>> userRatings = data.getUserRatings();
-		
-		Map<Book, BigDecimal> user1Ratings = new HashMap<>();
-		    user1Ratings.put(book1, BigDecimal.valueOf(6.0));
-		    user1Ratings.put(book2, BigDecimal.valueOf(5.0));
-		    user1Ratings.put(book5, BigDecimal.valueOf(2.5));
-	    userRatings.put(customer, user1Ratings);
-	    data.setUserRatings(userRatings);
-	}
-
 	private static int openScreen(Scanner scanner) {
 		customer = null;
 		username = "";
@@ -188,7 +176,7 @@ public class Main {
 			System.out.print("Input: ");
 
 			int choice = -1;
-			while (choice < 0 || choice > 2) {
+			while (choice < 0 || choice > 5) {
 				try {
 					String strChoice = scanner.next();
 					choice = Integer.parseInt(strChoice);
@@ -202,10 +190,13 @@ public class Main {
 						break;
 					case 3:
 						returnBook(scanner);
+						break;
 					case 4:
 						getRecommendations(scanner);
+						break;
 					case 5:
 						rateBook(scanner);
+						break;
 					case 0:
 						System.out.println("Logging out...");
 						return;
@@ -375,15 +366,54 @@ public class Main {
 	
 	private static void rateBook(Scanner scanner) {
 		Map<Customer, Map<Book, BigDecimal>> userRatings = data.getUserRatings();
-		List<Book> books = new ArrayList<>(userRatings.get(customer).keySet());
+	    Map<Book, BigDecimal> bookRating = userRatings.computeIfAbsent(customer, k -> new HashMap<>());
+	    
+		List<Book> books = Book.getAllBooks();
 		
+		if (books.isEmpty()) {
+	        System.out.println("No books available to rate.");
+	        return;
+	    }
+		
+	    System.out.println("Books available for rating:");
 		for (int i = 0; i < books.size(); i++) {
 			Book book = books.get(i);
 			System.out.println(i + ". " + book.getBookTitle());
 		}
 		
-			
+		System.out.print("Enter the number of the book you want to rate: ");
+		int bookChoice = -1;
+
+		while (bookChoice < 0 || bookChoice > books.size() - 1) {
+			try {
+				String strBookChoice = scanner.next();
+				bookChoice = Integer.parseInt(strBookChoice);
+				if (bookChoice < 0 || bookChoice > books.size() - 1) {
+					System.out.println("Invalid selection. Please choose a valid book number.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.print("Input is not a number. Try again.\nInput: ");
+			}
+		}
 		
+		Book selectedBook = books.get(bookChoice);	
 		
+		System.out.print("Enter rating: ");
+		double rating = -1;
+
+		while (rating < 0 || rating > 8) {
+			try {
+				String strRating = scanner.next();
+				rating = Double.parseDouble(strRating);
+				if (rating < 0 || rating > 8.0) {
+					System.out.println("Invalid rating. Please choose a rating between 0 and 8 (inclusive).");
+				}
+			} catch (NumberFormatException e) {
+				System.out.print("Input is not a number. Try again.\nInput: ");
+			}
+		}
+		
+		bookRating.put(selectedBook, BigDecimal.valueOf(rating));
+		System.out.println("Book successfully rated!");
 	} 
 }
