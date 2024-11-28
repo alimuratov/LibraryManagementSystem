@@ -5,7 +5,7 @@ import main.exceptions.*;
 import main.users.*;
 
 public class AuthenticationService{
-    private static Admin admin;
+    private static Admin admin = Admin.getInstance();
     private static ArrayList<User> users; // librarians and regular customers have the same login type
     private static SessionManager sessionManager = SessionManager.getInstance();
 
@@ -33,8 +33,9 @@ public class AuthenticationService{
         users.add(customer);
     }
 
-    public Admin getAdmin(Password password){
-        return checkPassword(admin, password) ? admin : null;
+    public Admin getAdmin(Password password) throws ExIncorrectPassword{
+        checkPassword(admin, password); 
+        return admin;
     }
 
     private static boolean checkPassword(User user, String parole){
@@ -43,9 +44,10 @@ public class AuthenticationService{
         return password.equals(userPassword);
     }
 
-    private static boolean checkPassword(User user, Password password){
+    private static void checkPassword(User user, Password password) throws ExIncorrectPassword{
         Password userPassword = user.getPassword();
-        return password.equals(userPassword);
+        if(!password.equals(userPassword))
+        	throw new ExIncorrectPassword();
     }
 
     private static boolean nameAlreadyExists(String name){
