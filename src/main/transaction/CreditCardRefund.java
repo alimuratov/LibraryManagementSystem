@@ -1,4 +1,4 @@
-package main.transaction;
+package transaction;
 
 public class CreditCardRefund implements RefundMethod {
 	@Override
