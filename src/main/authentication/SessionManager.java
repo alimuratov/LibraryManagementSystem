@@ -26,12 +26,12 @@ public class SessionManager {
 
     public void createSession(User user){
         Session session = new Session(user);
-        sessions.add(session);
+        addSession(session);
     }
 
     public void removeSession(User user) throws ExUserDoesNotExist{
         for(Session session: sessions)
-            if(session.getUser().equals(user) && session.getIsValid()){
+            if(session.getUser().equals(user)){
                 session.setIsValid(false);
                 sessions.remove(session);
                 return;
