@@ -6,7 +6,7 @@ import java.io.PrintStream;
 
 import org.junit.jupiter.api.Test;
 
-import test.transaction.*;
+import main.transaction.*;
 
 public class TestTransaction {
 	
