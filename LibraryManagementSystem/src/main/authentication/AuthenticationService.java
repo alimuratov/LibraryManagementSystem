@@ -5,7 +5,7 @@ import main.exceptions.*;
 import main.users.*;
 
 public class AuthenticationService{
-    private static Admin admin;
+    private static Admin admin = Admin.getInstance();
     private static ArrayList<User> users; // librarians and regular customers have the same login type
     private static SessionManager sessionManager = SessionManager.getInstance();
 

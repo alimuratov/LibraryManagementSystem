@@ -214,4 +214,20 @@ public class Book {
 		}
 		return isbn.hashCode();
 	}
+	
+	@Override
+	public String toString() {
+	    return "Book{" +
+	           ", Title='" + title + '\'' +
+	           ", Author='" + author + '\'' +
+	           ", Publisher='" + publisher + '\'' +
+	           ", Publication Date='" + publicationDate + '\'' +
+	           ", Description='" + bookDescription + '\'' +
+	           ", Price=$" + bookPrice +
+	           ", Rentable Copies=" + rentableCopies +
+	           ", Saleable Copies=" + saleableCopies +
+	           ", Renting Waitlist Size=" + rentingWaitList.size() +
+	           ", Selling Waitlist Size=" + sellingWaitList.size() +
+	           '}';
+	}
 }

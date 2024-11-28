@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Main {
 	private static boolean isRunning = true;
@@ -28,7 +26,6 @@ public class Main {
 	private static Admin admin = Admin.getInstance();
 	private static RecommendationService service;
 	private static Data data;
-
 
 	public static void main(String[] args) {
 		// AS.registerAdmin(cred, cred);
@@ -56,45 +53,47 @@ public class Main {
 	private static void initialization() {
 		Book book1 = new Book("Book1", "A comprehensive guide to marine biology and underwater research techniques.");
 		Book book2 = new Book("Book2", "Exploring the ocean depths through advanced marine research methodologies.");
-		Book book3 = new Book("Book3", "The role of marine biology ecosystems in ocean research and biodiversity studies.");
-		Book book4 = new Book("000-0000000000", "Book4", "Ali", "Litres", "2024-01-01", "Underwater archaeology: uncovering marine biology history and oceanic mysteries.", 10.0, 2, 2);
+		Book book3 = new Book("Book3",
+				"The role of marine biology ecosystems in ocean research and biodiversity studies.");
+		Book book4 = new Book("000-0000000000", "Book4", "Ali", "Litres", "2024-01-01",
+				"Underwater archaeology: uncovering marine biology history and oceanic mysteries.", 10.0, 2, 2);
 
-		Book book5 = new Book("Book five", "An introduction to dance and choreography for aspiring performers.");
-		Book book6 = new Book("Book six", "The history of ballet and the evolution of modern dance styles.");
-		Book book7 = new Book("Book seven", "Dance as an art form: exploring rhythm, movement, and creative expression.");
-		
+		Book book5 = new Book("Book5", "An introduction to dance and choreography for aspiring performers.");
+		Book book6 = new Book("Book6", "The history of ballet and the evolution of modern dance styles.");
+		Book book7 = new Book("Book7", "Dance as an art form: exploring rhythm, movement, and creative expression.");
+
 		data = new Data();
-		
+
 		Customer customer2 = new Customer("Vladimir");
-        Customer customer3 = new Customer("Arsen");
-        
+		Customer customer3 = new Customer("Arsen");
+
 		List<Book> books = Arrays.asList(book1, book2, book3, book4, book5, book6, book7);
 		data.setBooks(books);
 		for (Book book : books) {
 			Book.addBook(book);
 		}
-				
+
 		Map<Customer, Map<Book, BigDecimal>> userRatings = new HashMap<>();
-	    
-	    Map<Book, BigDecimal> user2Ratings = new HashMap<>();
-        user2Ratings.put(book3, BigDecimal.valueOf(7.0));
-        user2Ratings.put(book4, BigDecimal.valueOf(8.0));
-        user2Ratings.put(book6, BigDecimal.valueOf(8.0));
-        userRatings.put(customer2, user2Ratings);
-        
-        Map<Book, BigDecimal> user3Ratings = new HashMap<>();
-        user3Ratings.put(book1, BigDecimal.valueOf(5.5));
-        user3Ratings.put(book2, BigDecimal.valueOf(6.0));
-        user3Ratings.put(book3, BigDecimal.valueOf(7.5));
-        user3Ratings.put(book5, BigDecimal.valueOf(3.0));
-        user3Ratings.put(book7, BigDecimal.valueOf(2.5));
-        userRatings.put(customer3, user3Ratings);
-	    
-	    data.setUserRatings(userRatings);
-	    
-	    service = new RecommendationService();
+
+		Map<Book, BigDecimal> user2Ratings = new HashMap<>();
+		user2Ratings.put(book3, BigDecimal.valueOf(7.0));
+		user2Ratings.put(book4, BigDecimal.valueOf(8.0));
+		user2Ratings.put(book6, BigDecimal.valueOf(8.0));
+		userRatings.put(customer2, user2Ratings);
+
+		Map<Book, BigDecimal> user3Ratings = new HashMap<>();
+		user3Ratings.put(book1, BigDecimal.valueOf(5.5));
+		user3Ratings.put(book2, BigDecimal.valueOf(6.0));
+		user3Ratings.put(book3, BigDecimal.valueOf(7.5));
+		user3Ratings.put(book5, BigDecimal.valueOf(3.0));
+		user3Ratings.put(book7, BigDecimal.valueOf(2.5));
+		userRatings.put(customer3, user3Ratings);
+
+		data.setUserRatings(userRatings);
+
+		service = new RecommendationService();
 	}
-	
+
 	private static int openScreen(Scanner scanner) {
 		customer = null;
 		username = "";
@@ -163,8 +162,107 @@ public class Main {
 	}
 
 	private static void adminMenu(Scanner scanner) {
-		System.out.println("Admin Menu");
-		return;
+		while (true) {
+			System.out.println("Main Menu");
+			System.out.println("###############################################");
+			System.out.println("Enter 1 to Add a Book | Enter 2 to Remove a Book | Enter 0 to Exit");
+			System.out.print("Input: ");
+
+			int choice = -1;
+			while (choice < 0 || choice > 2) {
+				try {
+					String strChoice = scanner.next();
+					choice = Integer.parseInt(strChoice);
+
+					switch (choice) {
+					case 1:
+						addBook(scanner);
+						break;
+					case 2:
+						removeBook(scanner);
+						break;
+					case 0:
+						System.out.println("Logging out...");
+						return;
+					default:
+						System.out.println("Invalid option selected. Please try again.");
+					}
+				} catch (NumberFormatException e) {
+					System.out.print("Input is not a number. Try again.\nInput: ");
+				}
+			}
+		}
+	}
+
+	private static void addBook(Scanner scanner) {
+
+		System.out.print("Enter ISBN: ");
+		String isbn = scanner.nextLine();
+
+		System.out.print("Enter Title: ");
+		String title = scanner.nextLine();
+
+		System.out.print("Enter Author: ");
+		String author = scanner.nextLine();
+
+		System.out.print("Enter Publisher: ");
+		String publisher = scanner.nextLine();
+
+		System.out.print("Enter Publication Date (YYYY-MM-DD): ");
+		String publicationDate = scanner.nextLine();
+
+		System.out.print("Enter Book Description: ");
+		String bookDescription = scanner.nextLine();
+
+		System.out.print("Enter Book Price: ");
+		double price = scanner.nextDouble();
+
+		System.out.print("Enter Number of Rentable Copies: ");
+		int rentableCopies = scanner.nextInt();
+
+		System.out.print("Enter Number of Saleable Copies: ");
+		int saleableCopies = scanner.nextInt();
+
+		// Creating the Book instance
+		Book book = new Book(isbn, title, author, publisher, publicationDate, bookDescription, price, rentableCopies,
+				saleableCopies);
+		
+		admin.addBook(book);
+		
+        System.out.println("\nBook Added!");
+	}
+	
+	private static void removeBook(Scanner scanner) {
+		List<Book> allBooks = Book.getAllBooks();
+
+		if (allBooks.isEmpty()) {
+			System.out.println("No books are currently in the system.");
+			return;
+		}
+
+		System.out.println("Books:");
+		for (int i = 0; i < allBooks.size(); i++) {
+			Book book = allBooks.get(i);
+			System.out.println((i) + ". " + book.getBookTitle());
+		}
+
+		System.out.print("Enter the number of the book you want to remove: ");
+		int bookChoice = -1;
+
+		while (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
+			try {
+				String strBookChoice = scanner.next();
+				bookChoice = Integer.parseInt(strBookChoice);
+				if (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
+					System.out.println("Invalid selection. Please choose a valid book number.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.print("Input is not a number. Try again.\nInput: ");
+			}
+		}
+
+		Book selectedBook = allBooks.get(bookChoice);
+		admin.removeBook(selectedBook);
 	}
 
 	private static void mainMenu(Scanner scanner) {
@@ -172,11 +270,11 @@ public class Main {
 			System.out.println("Main Menu");
 			System.out.println("###############################################");
 			System.out.println(
-					"Enter 1 to Rent a Book | Enter 2 to Purchase a Book | Enter 3 to Return a Book | Enter 4 to Get Book Recommendations | Enter 5 to Rate a Book | Enter 0 to Exit");
+					"Enter 1 to Rent a Book | Enter 2 to Purchase a Book | Enter 3 to Return a Book | Enter 4 to Get Book Recommendations | \nEnter 5 to Rate a Book | Enter 6 to Search for a Book | Enter 0 to Exit");
 			System.out.print("Input: ");
 
 			int choice = -1;
-			while (choice < 0 || choice > 5) {
+			while (choice < 0 || choice > 6) {
 				try {
 					String strChoice = scanner.next();
 					choice = Integer.parseInt(strChoice);
@@ -197,6 +295,9 @@ public class Main {
 					case 5:
 						rateBook(scanner);
 						break;
+					case 6:
+						searchBook(scanner);
+						break;
 					case 0:
 						System.out.println("Logging out...");
 						return;
@@ -205,6 +306,8 @@ public class Main {
 					}
 				} catch (NumberFormatException e) {
 					System.out.print("Input is not a number. Try again.\nInput: ");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
 				}
 			}
 		}
@@ -319,17 +422,18 @@ public class Main {
 				System.out.print("Input is not a number. Try again.\nInput: ");
 			}
 		}
-		
+
 		Book selectedBook = bookList.get(bookChoice);
-		
+
 		customer.returnBook(selectedBook);
 	}
-	
+
 	private static void getRecommendations(Scanner scanner) {
 		String recommendationStrategy;
 
 		while (true) {
-			System.out.print("Enter the recommendation strategy ('content' for Content-Filtering, 'collaborative' for Collaborative-Filtering): ");
+			System.out.print(
+					"Enter the recommendation strategy ('content' for Content-Filtering, 'collaborative' for Collaborative-Filtering): ");
 			recommendationStrategy = scanner.next().trim();
 			if (recommendationStrategy.equals("content") || recommendationStrategy.equals("collaborative")) {
 				break;
@@ -337,10 +441,10 @@ public class Main {
 				System.out.println("Invalid recommendation strategy. Try again.");
 			}
 		}
-		
+
 		service.setStrategy(recommendationStrategy, data);
-				
-		System.out.print("Enter the required number of recommendations ");
+
+		System.out.print("Enter the required number of recommendations: ");
 		int recommendationsNumber = -1;
 
 		while (true) {
@@ -354,33 +458,33 @@ public class Main {
 				System.out.print("Input is not a number. Try again.\nInput: ");
 			}
 		}
-		
+
 		List<Book> recommendations = Arrays.asList(service.getRecommendations(customer, recommendationsNumber));
-		
+
 		System.out.println("Recommendations:");
-		
+
 		for (Book recommendation : recommendations) {
-			System.out.println(recommendation.getBookTitle()); 
+			System.out.println(recommendation.getBookTitle());
 		}
 	}
-	
+
 	private static void rateBook(Scanner scanner) {
 		Map<Customer, Map<Book, BigDecimal>> userRatings = data.getUserRatings();
-	    Map<Book, BigDecimal> bookRating = userRatings.computeIfAbsent(customer, k -> new HashMap<>());
-	    
+		Map<Book, BigDecimal> bookRating = userRatings.computeIfAbsent(customer, k -> new HashMap<>());
+
 		List<Book> books = Book.getAllBooks();
-		
+
 		if (books.isEmpty()) {
-	        System.out.println("No books available to rate.");
-	        return;
-	    }
-		
-	    System.out.println("Books available for rating:");
+			System.out.println("No books available to rate.");
+			return;
+		}
+
+		System.out.println("Books available for rating:");
 		for (int i = 0; i < books.size(); i++) {
 			Book book = books.get(i);
 			System.out.println(i + ". " + book.getBookTitle());
 		}
-		
+
 		System.out.print("Enter the number of the book you want to rate: ");
 		int bookChoice = -1;
 
@@ -395,9 +499,9 @@ public class Main {
 				System.out.print("Input is not a number. Try again.\nInput: ");
 			}
 		}
-		
-		Book selectedBook = books.get(bookChoice);	
-		
+
+		Book selectedBook = books.get(bookChoice);
+
 		System.out.print("Enter rating: ");
 		double rating = -1;
 
@@ -412,8 +516,30 @@ public class Main {
 				System.out.print("Input is not a number. Try again.\nInput: ");
 			}
 		}
-		
+
 		bookRating.put(selectedBook, BigDecimal.valueOf(rating));
 		System.out.println("Book successfully rated!");
-	} 
+	}
+
+	private static void searchBook(Scanner scanner) {
+		System.out.print("Enter search keywords: ");
+		String searchString = scanner.next();
+
+		if (searchString.isEmpty()) {
+			System.out.println("Search keywords cannot be empty.");
+			return;
+		}
+
+		List<Book> searchResults = Book.search(searchString);
+
+		if (searchResults == null || searchResults.isEmpty()) {
+			System.out.println("No books found matching your search.");
+		} else {
+			System.out.println("Search Results:");
+			for (Book book : searchResults) {
+				System.out.println(book); // Ensure Book.toString() is meaningful
+			}
+		}
+	}
+
 }
