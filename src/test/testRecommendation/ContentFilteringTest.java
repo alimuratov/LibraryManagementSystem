@@ -47,7 +47,6 @@ public class ContentFilteringTest {
         contentFiltering = new ContentFiltering(testData);
 	}
 	
-	@Disabled
 	@Test
 	void test_1() {
 		Book[] recommendations = contentFiltering.getRecommendations(user1, 2);
