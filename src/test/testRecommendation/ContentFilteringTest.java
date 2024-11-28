@@ -747,12 +747,6 @@ public class ContentFilteringTest {
 	    assertEquals(expectedUser11b, actualUser11b);
 	}
 
-	void testComputeTfIdfVectors_BooksAreNotSet() {
-		Data data = new Data();
-		ContentFiltering contentFiltering = new ContentFiltering(data);
-		contentFiltering.createTfIdfSeparately();
-		assertTrue(contentFiltering.getTfIdfDict().isEmpty());
-	}
 	@Test
 	void testComputeTfIdfVectors_NonEmptyBooksWithValidTfAndIdf() {
 		Data data = new Data();
