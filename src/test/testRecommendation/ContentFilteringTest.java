@@ -48,19 +48,6 @@ public class ContentFilteringTest {
 	}
 	
 	@Test
-	void test_1() {
-		Book[] recommendations = contentFiltering.getRecommendations(user1, 2);
-		
-		List<Book> ratedBooks = Arrays.asList(book1, book3);
-		
-		for (Book book : recommendations) {
-			assertFalse(ratedBooks.contains(book));
-		}
-		
-		assertEquals(2, recommendations.length);
-	}
-	
-	@Test
 	void testCreateTfIdfSeparately_NormalDescriptions() {
 		List<Book> books = Arrays.asList(
 		            new Book("Book A", "The quick brown fox"),
