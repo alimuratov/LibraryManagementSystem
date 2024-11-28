@@ -47,6 +47,20 @@ public class Book {
              0    // Default saleable copies
         );
     }
+    
+    public Book(String title, String bookDescription, Integer id) {
+        this(String.valueOf(id),
+             title, 
+             "Unknown Author",
+             "Unknown Publisher",
+             "2024-01-01",
+             bookDescription, 
+             0.0, // Default price
+             0,   // Default rentable copies
+             0    // Default saleable copies
+        );
+    }
+
 
     // Static method to get all books
     public static List<Book> getAllBooks() {
@@ -157,4 +171,65 @@ public class Book {
     public String showAvailableSaleableCopies() {
         return saleableCopies + " saleable copies available";
     }
+    
+    public String getBookDescription() {
+        return bookDescription;
+    }
+
+    public void setBookDescription(String bookDescription) {
+        this.bookDescription = bookDescription;
+    }
+    
+    public static List<Book> search(String searchString) {
+        String[] tokens = searchString.split("[\\p{Punct}\\s]+"); // Regex to split by punctuation and whitespace
+        
+        List<Book> result = new ArrayList<>();
+        
+        for (Book book : allBooks) {
+            String bookDescription = book.getBookDescription().toLowerCase();
+            for (String token : tokens) {
+                if (bookDescription.contains(token.toLowerCase())) {
+                    result.add(book);
+                    break;
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Book))
+            return false;
+        Book other = (Book) obj;
+        return title.equals(other.title);
+    }
+
+    @Override
+    public int hashCode() {
+        if (isbn == null) {
+            return title.hashCode();
+        }
+        return isbn.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+               ", Title='" + title + '\'' +
+               ", Author='" + author + '\'' +
+               ", Publisher='" + publisher + '\'' +
+               ", Publication Date='" + publicationDate + '\'' +
+               ", Description='" + bookDescription + '\'' +
+               ", Price=$" + bookPrice +
+               ", Rentable Copies=" + rentableCopies +
+               ", Saleable Copies=" + saleableCopies +
+               ", Renting Waitlist Size=" + rentingWaitList.size() +
+               ", Selling Waitlist Size=" + sellingWaitList.size() +
+               '}';
+    }
+
 }
