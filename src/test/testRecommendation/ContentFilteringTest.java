@@ -580,16 +580,22 @@ public class ContentFilteringTest {
         assertEquals(expected, actual);
     } 
 	@Test
-	void testGetPreferredBookNames_UserRatingsNull() {
-		Data data = new Data();
-	    // Set userRatings to null
-	    contentFiltering.setNewData(data);
+	void testGetPreferredBookNames_UserRatingsMapNull() {
+	    Customer user3 = new Customer("user3");
+	    
+	    Map<Customer, Map<Book, BigDecimal>> userRatings = new HashMap<>();
+	    userRatings.put(user3, null); 	    
+	    
+	    Data data = new Data(userRatings, null);
+	    
+	    ContentFiltering contentFiltering = new ContentFiltering(data);
 	    
 	    List<String> expected = Collections.emptyList();
-	    List<String> actual = contentFiltering.getPreferredBookNames(user1);
+	    List<String> actual = contentFiltering.getPreferredBookNames(user3);
 	    
 	    assertEquals(expected, actual);
 	}
+	
 	@Test
 	void testGetPreferredBookNames_UserNotInUserRatings() {
 	    Customer user2 = new Customer("user2"); // New user not in userRatings
