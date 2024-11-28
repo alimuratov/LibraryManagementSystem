@@ -233,9 +233,10 @@ class TestBook {
             System.setOut(originalOut);
         }
     }
-    
+
     @Test 
     void testSearch_BasicSearch() {
+    	Book.removeAllBooks();
     	Book book1 = new Book("Book1", "The quick brown fox");
     	Book book2 = new Book("Book2", "Lazy dog jumps over");
     	Book book3 = new Book("Book3", "Quick movements in the wild");
@@ -250,6 +251,7 @@ class TestBook {
     
     @Test
     void testSeach_CaseSensitivity() {
+    	Book.removeAllBooks();
     	Book book1 = new Book("Book1", "The quick brown fox");
     	Book book2 = new Book("Book2", "Lazy dog jumps over");
     	Book book3 = new Book("Book3", "Quick movements in the wild");
@@ -264,6 +266,7 @@ class TestBook {
     
     @Test
     void testSearch_Punctuations() {
+    	Book.removeAllBooks();
     	Book book1 = new Book("Book1", "The quick!!; brown fox");
     	Book book2 = new Book("Book2", "Lazy dog;; jumps. over");
     	Book book3 = new Book("Book3", "Quick movements, in; the! wild");
@@ -278,6 +281,7 @@ class TestBook {
     
     @Test
     void testSearch_noMatches() {
+    	Book.removeAllBooks();
     	Book book1 = new Book("Book1", "The quick!!; brown fox");
     	Book book2 = new Book("Book2", "Lazy dog;; jumps. over");
     	Book book3 = new Book("Book3", "Quick movements, in; the! wild");
@@ -291,6 +295,7 @@ class TestBook {
     
     @Test
     void testSearch_emptyString() {
+    	Book.removeAllBooks();
     	Book book1 = new Book("Book1", "The quick!!; brown fox");
     	Book book2 = new Book("Book2", "Lazy dog;; jumps. over");
     	Book book3 = new Book("Book3", "Quick movements, in; the! wild");
