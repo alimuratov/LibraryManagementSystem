@@ -2,9 +2,9 @@ package main.authentication;
 
 import main.exceptions.ExInvalidPassword;
 
-public class Password { //this class is added because in the future we might implement something more
-                        //sophisticated like activity log of user's passwords or similar
-    private String parole; //parole is just String version of Password
+public class Password {
+    
+    private String parole;
     public Password(String parole){
         this.parole = parole;
     }
