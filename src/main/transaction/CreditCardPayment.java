@@ -1,4 +1,4 @@
-package transaction;
+package main.transaction;
 
 public class CreditCardPayment implements PaymentMethod {
     @Override
