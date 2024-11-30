@@ -50,6 +50,8 @@ public class ContentFiltering extends RecommendationStrategyBase {
 			if (!data.isBookRatedByUser(book, user)) {
 				Map<String, Double> bookVector = tfIdfProcessor.getTfIdfVectorForBook(book.getBookTitle());
 				double similarity = tfIdfProcessor.cosineSimilarity(bookVector, profileVector);
+				// Test
+				// System.out.println("Book: " + book.getBookTitle() + "; Similarity: " + similarity);
 				bookSimilarities.put(book, similarity);
 			}
 		}

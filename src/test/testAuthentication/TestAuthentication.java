@@ -64,6 +64,41 @@ public class TestAuthentication {
     }
 
     @Test
+    public void testLoginAdmin_1() {
+    	AuthenticationService authenticationService = AuthenticationService.getInstance();
+    	String parole = "Admin123";
+    	Password password = new Password(parole);
+    	
+    	String userName = "admin";
+    	
+    	Admin admin = Admin.getInstance(), admin2 = null;
+    	
+    	try {
+    		admin = authenticationService.loginAdmin(parole);
+    		admin2 = authenticationService.getAdmin(password);
+    	} catch (Exception e) {
+            fail("Login should not throw an exception, but it threw: " + e.getMessage());
+    	}
+    	assertEquals(userName, admin.getUserName());
+    	assertEquals(admin, admin2);
+    }
+    
+    @Test
+    public void testLoginAdmin_2() {
+    	AuthenticationService authenticationService = AuthenticationService.getInstance();
+    	String parole = "Admin124";
+    	Password password = new Password(parole);
+    	
+    	String userName = "admin";
+    	
+    	Admin admin = Admin.getInstance();
+    	
+    	assertThrows(ExIncorrectPassword.class, ()-> {
+    		authenticationService.loginAdmin(parole);
+    	});
+    }
+    
+    @Test
     public void testRegister_1(){ // valid password
         AuthenticationService authenticationService = AuthenticationService.getInstance();
         String parole = "1234ABCDefg";

@@ -98,7 +98,7 @@ public class TestPassword {
 
     @Test
     public void testRegister_9(){ //invalid password (completely invalid)
-        String parole = "+-+-+-+-+-+-+";
+        String parole = "{-+-+-+-+-+-+";
         Password password = new Password(parole);
 
         ExInvalidPassword e = assertThrows(ExInvalidPassword.class, () -> {
@@ -106,5 +106,15 @@ public class TestPassword {
         });
 
         assertEquals("Password must contain at least one digit, at least one uppercase letter, and at least one lowercase letter\n", e.getMessage());
+    }
+    
+    @Test
+    public void testEquals() {
+    	Password password1 = new Password("Password1");
+    	Password password2 = new Password("Password2");
+    	Password password3 = new Password("Password1");
+    	
+    	assertTrue(password1.equals(password3));
+    	assertFalse(password1.equals(password2));
     }
 }

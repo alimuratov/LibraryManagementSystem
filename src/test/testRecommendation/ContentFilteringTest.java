@@ -47,19 +47,6 @@ public class ContentFilteringTest {
         contentFiltering = new ContentFiltering(testData);
 	}
 	
-	@Disabled
-	@Test
-	void test_1() {
-		Book[] recommendations = contentFiltering.getRecommendations(user1, 2);
-		
-		List<Book> ratedBooks = Arrays.asList(book1, book3);
-		
-		for (Book book : recommendations) {
-			assertFalse(ratedBooks.contains(book));
-		}
-		
-		assertEquals(2, recommendations.length);
-	}
 	
 	@Test
 	void testCreateTfIdfSeparately_NormalDescriptions() {
@@ -616,13 +603,11 @@ public class ContentFilteringTest {
 	@Test
 	void testGetPreferredBookNames_UserRatingsMapNull() {
 	    Customer user3 = new Customer("user3");
-	    Data data = new Data();
-	    data.setBooks(null);
 	    
 	    Map<Customer, Map<Book, BigDecimal>> userRatings = new HashMap<>();
-	    userRatings.put(user3, null); 
+	    userRatings.put(user3, null); 	    
 	    
-	    data.setUserRatings(userRatings);
+	    Data data = new Data(userRatings, null);
 	    
 	    ContentFiltering contentFiltering = new ContentFiltering(data);
 	    
@@ -761,12 +746,6 @@ public class ContentFilteringTest {
 	    assertEquals(expectedUser11b, actualUser11b);
 	}
 
-	void testComputeTfIdfVectors_BooksAreNotSet() {
-		Data data = new Data();
-		ContentFiltering contentFiltering = new ContentFiltering(data);
-		contentFiltering.createTfIdfSeparately();
-		assertTrue(contentFiltering.getTfIdfDict().isEmpty());
-	}
 	@Test
 	void testComputeTfIdfVectors_NonEmptyBooksWithValidTfAndIdf() {
 		Data data = new Data();

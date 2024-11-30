@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import main.book.*;
 
 // Review Tests
-class ReviewTest {
+class TestReview {
     @Test
     void testValidReviewCreation() {
         Review review = new Review("Great book", 5);

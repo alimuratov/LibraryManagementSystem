@@ -28,7 +28,6 @@ public class Main {
 	private static Data data;
 
 	public static void main(String[] args) {
-		// AS.registerAdmin(cred, cred);
 		Scanner scanner = new Scanner(System.in);
 		initialization();
 
@@ -51,16 +50,32 @@ public class Main {
 	}
 
 	private static void initialization() {
-		Book book1 = new Book("Book1", "A comprehensive guide to marine biology and underwater research techniques.");
-		Book book2 = new Book("Book2", "Exploring the ocean depths through advanced marine research methodologies.");
-		Book book3 = new Book("Book3",
-				"The role of marine biology ecosystems in ocean research and biodiversity studies.");
-		Book book4 = new Book("000-0000000000", "Book4", "Ali", "Litres", "2024-01-01",
+		Book book1 = new Book("978-3-16-148410-0", 
+				"Book1", "Dr. Emily Waters",
+				"Oceanic Press", 
+				"2023-05-15", 
+				"A comprehensive guide to marine biology and underwater marine ecosystems research techniques.", 45.99, // Price
+				10,
+				5 
+		);
+
+		Book book2 = new Book("978-1-4028-9462-6", "Book2", "Prof. Liam Fisher", "DeepSea Publications", "2022-08-22",
+				"Exploring the ocean depths through advanced marine research methodologies.", 39.50, 8, 4);
+
+		Book book3 = new Book("978-0-545-01022-1", "Book3", "Dr. Sophia Marine", "BlueWater Books", "2021-11-10",
+				"The role of marine biology ecosystems in ocean research and biodiversity studies.", 50.00, 12, 6);
+
+		Book book4 = new Book("978-0-262-13472-9", "Book4", "Ali Hassan", "Litres", "2024-01-01",
 				"Underwater archaeology: uncovering marine biology history and oceanic mysteries.", 10.0, 2, 2);
 
-		Book book5 = new Book("Book5", "An introduction to dance and choreography for aspiring performers.");
-		Book book6 = new Book("Book6", "The history of ballet and the evolution of modern dance styles.");
-		Book book7 = new Book("Book7", "Dance as an art form: exploring rhythm, movement, and creative expression.");
+		Book book5 = new Book("978-0-306-40615-7", "Book5", "Ms. Isabella Dance", "Rhythm House", "2020-03-18",
+				"An introduction to dance and choreography for aspiring performers.", 25.75, 7, 3);
+
+		Book book6 = new Book("978-1-86197-876-9", "Book6", "Mr. Ethan Ballet", "Graceful Publishers", "2019-07-30",
+				"Ballet history and the evolution of modern dance styles.", 30.00, 5, 2);
+
+		Book book7 = new Book("978-0-14-044911-2", "Book7", "Ms. Ava Rhythm", "MoveIt Press", "2021-12-05",
+				"Dance as an art form: exploring rhythm, movement, and creative expression.", 28.50, 0, 0);
 
 		data = new Data();
 
@@ -105,17 +120,16 @@ public class Main {
 		int response = -1;
 		while (response < 0 || response > 3) {
 			try {
-				String strResponse = scanner.next();
+				String strResponse = scanner.nextLine();
 				response = Integer.parseInt(strResponse);
 				if (response == 1) {
 					boolean done = false;
 					while (!done) {
 						try {
-
 							System.out.print("Define your username: ");
-							username = scanner.next();
+							username = scanner.nextLine();
 							System.out.print("Define your password: ");
-							parole = scanner.next();
+							parole = scanner.nextLine();
 							customer = authenticationService.registerCustomer(username, parole);
 							done = true;
 						} catch (ExInvalidPassword e) {
@@ -131,9 +145,9 @@ public class Main {
 					while (!done) {
 						try {
 							System.out.print("Enter your username: ");
-							username = scanner.next();
+							username = scanner.nextLine();
 							System.out.print("Enter your password: ");
-							parole = scanner.next();
+							parole = scanner.nextLine();
 
 							if (username.equals("admin")) {
 								authenticationService.loginAdmin(parole);
@@ -150,11 +164,9 @@ public class Main {
 				} else if (response == 0)
 					isRunning = false;
 				else {
-					System.out.println("GLUP SI KO KURAC, TO UOPSTE NIJE TOKEN KOJI TREBA DA KORISTIS");
+					System.out.println("Invalid selection. Please enter 0, 1, or 2.");
 				}
-			} /*
-				 * catch (ExInvalidToken e) { System.out.print(e.getMessage()); }
-				 */ catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				System.out.print("Input is not a number. Try again.\nInput: ");
 			}
 		}
@@ -163,7 +175,7 @@ public class Main {
 
 	private static void adminMenu(Scanner scanner) {
 		while (true) {
-			System.out.println("Main Menu");
+			System.out.println("Admin Menu");
 			System.out.println("###############################################");
 			System.out.println("Enter 1 to Add a Book | Enter 2 to Remove a Book | Enter 0 to Exit");
 			System.out.print("Input: ");
@@ -171,7 +183,7 @@ public class Main {
 			int choice = -1;
 			while (choice < 0 || choice > 2) {
 				try {
-					String strChoice = scanner.next();
+					String strChoice = scanner.nextLine();
 					choice = Integer.parseInt(strChoice);
 
 					switch (choice) {
@@ -195,43 +207,81 @@ public class Main {
 	}
 
 	private static void addBook(Scanner scanner) {
-
 		System.out.print("Enter ISBN: ");
-		String isbn = scanner.nextLine();
+		String isbn = scanner.nextLine().trim();
 
 		System.out.print("Enter Title: ");
-		String title = scanner.nextLine();
+		String title = scanner.nextLine().trim();
 
 		System.out.print("Enter Author: ");
-		String author = scanner.nextLine();
+		String author = scanner.nextLine().trim();
 
 		System.out.print("Enter Publisher: ");
-		String publisher = scanner.nextLine();
+		String publisher = scanner.nextLine().trim();
 
 		System.out.print("Enter Publication Date (YYYY-MM-DD): ");
-		String publicationDate = scanner.nextLine();
+		String publicationDate = scanner.nextLine().trim();
 
 		System.out.print("Enter Book Description: ");
-		String bookDescription = scanner.nextLine();
+		String bookDescription = scanner.nextLine().trim();
 
-		System.out.print("Enter Book Price: ");
-		double price = scanner.nextDouble();
+		double price = 0.0;
+		while (true) {
+			try {
+				System.out.print("Enter Book Price: ");
+				String priceInput = scanner.nextLine().trim();
+				price = Double.parseDouble(priceInput);
+				if (price < 0) {
+					System.out.println("Price cannot be negative. Please enter a valid price.");
+					continue;
+				}
+				break;
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input for price. Please enter a numeric value.");
+			}
+		}
 
-		System.out.print("Enter Number of Rentable Copies: ");
-		int rentableCopies = scanner.nextInt();
+		int rentableCopies = 0;
+		while (true) {
+			try {
+				System.out.print("Enter Number of Rentable Copies: ");
+				String rentableInput = scanner.nextLine().trim();
+				rentableCopies = Integer.parseInt(rentableInput);
+				if (rentableCopies < 0) {
+					System.out.println("Number of rentable copies cannot be negative. Please enter a valid number.");
+					continue;
+				}
+				break;
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input for rentable copies. Please enter an integer value.");
+			}
+		}
 
-		System.out.print("Enter Number of Saleable Copies: ");
-		int saleableCopies = scanner.nextInt();
+		int saleableCopies = 0;
+		while (true) {
+			try {
+				System.out.print("Enter Number of Saleable Copies: ");
+				String saleableInput = scanner.nextLine().trim();
+				saleableCopies = Integer.parseInt(saleableInput);
+				if (saleableCopies < 0) {
+					System.out.println("Number of saleable copies cannot be negative. Please enter a valid number.");
+					continue;
+				}
+				break;
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input for saleable copies. Please enter an integer value.");
+			}
+		}
 
 		// Creating the Book instance
 		Book book = new Book(isbn, title, author, publisher, publicationDate, bookDescription, price, rentableCopies,
 				saleableCopies);
-		
+
 		admin.addBook(book);
-		
-        System.out.println("\nBook Added!");
+
+		System.out.println("\nBook Added!");
 	}
-	
+
 	private static void removeBook(Scanner scanner) {
 		List<Book> allBooks = Book.getAllBooks();
 
@@ -251,7 +301,7 @@ public class Main {
 
 		while (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
 			try {
-				String strBookChoice = scanner.next();
+				String strBookChoice = scanner.nextLine();
 				bookChoice = Integer.parseInt(strBookChoice);
 				if (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
 					System.out.println("Invalid selection. Please choose a valid book number.");
@@ -276,7 +326,7 @@ public class Main {
 			int choice = -1;
 			while (choice < 0 || choice > 6) {
 				try {
-					String strChoice = scanner.next();
+					String strChoice = scanner.nextLine();
 					choice = Integer.parseInt(strChoice);
 
 					switch (choice) {
@@ -332,7 +382,7 @@ public class Main {
 
 		while (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
 			try {
-				String strBookChoice = scanner.next();
+				String strBookChoice = scanner.nextLine();
 				bookChoice = Integer.parseInt(strBookChoice);
 				if (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
 					System.out.println("Invalid selection. Please choose a valid book number.");
@@ -365,7 +415,7 @@ public class Main {
 
 		while (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
 			try {
-				String strBookChoice = scanner.next();
+				String strBookChoice = scanner.nextLine();
 				bookChoice = Integer.parseInt(strBookChoice);
 				if (bookChoice < 0 || bookChoice > allBooks.size() - 1) {
 					System.out.println("Invalid selection. Please choose a valid book number.");
@@ -381,7 +431,7 @@ public class Main {
 
 		while (true) {
 			System.out.print("Enter the payment method (WeChat or CreditCard): ");
-			paymentMethod = scanner.next().trim();
+			paymentMethod = scanner.nextLine().trim();
 			if (paymentMethod.equals("WeChat") || paymentMethod.equals("CreditCard")) {
 				break;
 			} else {
@@ -413,7 +463,7 @@ public class Main {
 
 		while (bookChoice < 0 || bookChoice > bookList.size() - 1) {
 			try {
-				String strBookChoice = scanner.next();
+				String strBookChoice = scanner.nextLine();
 				bookChoice = Integer.parseInt(strBookChoice);
 				if (bookChoice < 0 || bookChoice > bookList.size() - 1) {
 					System.out.println("Invalid selection. Please choose a valid book number.");
@@ -434,7 +484,7 @@ public class Main {
 		while (true) {
 			System.out.print(
 					"Enter the recommendation strategy ('content' for Content-Filtering, 'collaborative' for Collaborative-Filtering): ");
-			recommendationStrategy = scanner.next().trim();
+			recommendationStrategy = scanner.nextLine().trim();
 			if (recommendationStrategy.equals("content") || recommendationStrategy.equals("collaborative")) {
 				break;
 			} else {
@@ -449,10 +499,12 @@ public class Main {
 
 		while (true) {
 			try {
-				String recommendationNumberString = scanner.next();
+				String recommendationNumberString = scanner.nextLine();
 				recommendationsNumber = Integer.parseInt(recommendationNumberString);
 				if (recommendationsNumber > 0) {
 					break;
+				} else {
+					System.out.println("Please enter a positive integer.");
 				}
 			} catch (NumberFormatException e) {
 				System.out.print("Input is not a number. Try again.\nInput: ");
@@ -464,7 +516,8 @@ public class Main {
 		System.out.println("Recommendations:");
 
 		for (Book recommendation : recommendations) {
-			System.out.println(recommendation.getBookTitle());
+			System.out.print("Book Title: " + '"' + recommendation.getBookTitle() + "\"; ");
+			System.out.println("Book Description: " + '"' + recommendation.getBookDescription() + '"');
 		}
 	}
 
@@ -490,7 +543,7 @@ public class Main {
 
 		while (bookChoice < 0 || bookChoice > books.size() - 1) {
 			try {
-				String strBookChoice = scanner.next();
+				String strBookChoice = scanner.nextLine();
 				bookChoice = Integer.parseInt(strBookChoice);
 				if (bookChoice < 0 || bookChoice > books.size() - 1) {
 					System.out.println("Invalid selection. Please choose a valid book number.");
@@ -502,18 +555,18 @@ public class Main {
 
 		Book selectedBook = books.get(bookChoice);
 
-		System.out.print("Enter rating: ");
+		System.out.print("Enter rating (from 0 to 8): ");
 		double rating = -1;
 
 		while (rating < 0 || rating > 8) {
 			try {
-				String strRating = scanner.next();
+				String strRating = scanner.nextLine();
 				rating = Double.parseDouble(strRating);
 				if (rating < 0 || rating > 8.0) {
 					System.out.println("Invalid rating. Please choose a rating between 0 and 8 (inclusive).");
 				}
 			} catch (NumberFormatException e) {
-				System.out.print("Input is not a number. Try again.\nInput: ");
+				System.out.print("Input is not a valid number. Try again.\nInput: ");
 			}
 		}
 
@@ -523,7 +576,7 @@ public class Main {
 
 	private static void searchBook(Scanner scanner) {
 		System.out.print("Enter search keywords: ");
-		String searchString = scanner.next();
+		String searchString = scanner.nextLine();
 
 		if (searchString.isEmpty()) {
 			System.out.println("Search keywords cannot be empty.");
@@ -541,5 +594,4 @@ public class Main {
 			}
 		}
 	}
-
 }

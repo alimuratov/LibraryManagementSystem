@@ -231,5 +231,8 @@ public class Book {
                ", Selling Waitlist Size=" + sellingWaitList.size() +
                '}';
     }
-
+    
+    public static void removeAllBooks() {
+    	if (allBooks != null && !allBooks.isEmpty()) allBooks.clear();
+    }
 }

@@ -50,4 +50,24 @@ public class TestSessionManager {
             sessionManager.removeSession(newUser);
         });
     }
-}
+    /*
+    @Test
+    public void testRemoveSession_3(){
+    	SessionManager sessionManager = SessionManager.getInstance();
+        int oldCount = sessionManager.getSize();
+        Password password = new Password("AStrongPa55word");
+        User user = new Customer("Kazakhstan", password);
+
+        sessionManager.createSession(user);
+        
+        try {
+        	sessionManager.removeSession(user);
+        } catch (Exception e) {
+        	fail("Remove session should not throw an exception, but it threw: " + e.getMessage());
+        }
+        
+        assertThrows(ExUserDoesNotExist.class, () -> {
+            sessionManager.removeSession(user);
+        });
+    }*/
+}	
