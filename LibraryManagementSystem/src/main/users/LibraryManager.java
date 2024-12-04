@@ -117,25 +117,32 @@ public class LibraryManager{
     }
 
     public void processReturns(LocalDate currentDate) {
-        List<RentalRecord> recordsToReturn = activeRentals.remove(currentDate);
-        if (recordsToReturn == null || recordsToReturn.isEmpty()) {
-            System.out.println("No rentals to return on " + currentDate);
+    	NavigableMap<LocalDate, List<RentalRecord>> dueRentals = activeRentals.headMap(currentDate, true);
+    	if (dueRentals.isEmpty()) {
+            System.out.println("No rentals to return up to " + currentDate);
             return;
         }
 
-        for (RentalRecord record : recordsToReturn) {
-            Book book = record.getBook();
-            Customer customer = record.getCustomer();
-            
-            book.setRentableCopies(book.getRentableCopies() + 1);
-            customer.removeRentedBook(book);
-            customer.getMembership().addXP(10);
-            
+    	for (Map.Entry<LocalDate, List<RentalRecord>> entry : dueRentals.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<RentalRecord> records = entry.getValue();
 
-            System.out.println("Book returned automatically: " + book.getDisplayText() + " by " + customer.getUserName());
+            for (RentalRecord record : records) {
+                Book book = record.getBook();
+                Customer customer = record.getCustomer();
 
-            processRentingWaitlist(book);
+                book.setRentableCopies(book.getRentableCopies() + 1);
+                customer.removeRentedBook(book);
+                customer.getMembership().addXP(10);
+
+                System.out.println("Book returned automatically: " + book.getDisplayText()
+                        + " by " + customer.getUserName() + " on " + date);
+
+                processRentingWaitlist(book);
+            }
         }
+
+        dueRentals.clear();
     }
 
     // Process renting waitlist
