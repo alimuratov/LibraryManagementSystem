@@ -235,4 +235,8 @@ public class Book {
     public static void removeAllBooks() {
     	if (allBooks != null && !allBooks.isEmpty()) allBooks.clear();
     }
+    
+    public static void resetAllBooks() {
+    	allBooks = null;
+    }
 }
