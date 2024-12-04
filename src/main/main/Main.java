@@ -594,4 +594,17 @@ public class Main {
 			}
 		}
 	}
+
+	public static void resetState() {
+	    isRunning = true;
+	    username = null;
+	    parole = null;
+	    password = null;
+	    customer = null;
+	    authenticationService = AuthenticationService.getInstance();
+	    admin = Admin.getInstance();
+	    service = null;
+	    data = null;
+	    Book.resetAllBooks();
+	}
 }
