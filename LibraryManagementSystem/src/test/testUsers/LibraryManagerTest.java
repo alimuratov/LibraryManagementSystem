@@ -577,8 +577,14 @@ public class LibraryManagerTest {
 	    silverCustomer = new Customer("SilverUser", password);   // Silver
 	    goldCustomer = new Customer("GoldUser", password);       // Gold
 
-	    silverCustomer.getMembership().addXP(100);
-	    goldCustomer.getMembership().addXP(350);
+	    for (int purchase = 0; purchase < 10; purchase++) {
+	    	silverCustomer.getMembership().addXP(20);
+	    }
+	    
+	    for (int purchase = 0; purchase < 18; purchase++) {
+	    	goldCustomer.getMembership().addXP(20);
+	    }
+	    
         rentableBook = new Book("ISBN-R", "Rentable Book", "Author A", "Publisher A", 
                 "2024-01-01", "Description A", 50.0, 1, 5);
 		salableBook = new Book("ISBN-S", "Salable Book", "Author B", "Publisher B", 
@@ -610,8 +616,13 @@ public class LibraryManagerTest {
 	    silverCustomer = new Customer("SilverUser", password);   // Silver
 	    goldCustomer = new Customer("GoldUser", password);       // Gold
 
-	    silverCustomer.getMembership().addXP(100);
-	    goldCustomer.getMembership().addXP(350);
+	    for (int purchase = 0; purchase < 10; purchase++) {
+	    	silverCustomer.getMembership().addXP(20);
+	    }
+	    
+	    for (int purchase = 0; purchase < 18; purchase++) {
+	    	goldCustomer.getMembership().addXP(20);
+	    }
         rentableBook = new Book("ISBN-R", "Rentable Book", "Author A", "Publisher A", 
                 "2024-01-01", "Description A", 50.0, 1, 5);
 		salableBook = new Book("ISBN-S", "Salable Book", "Author B", "Publisher B", 

@@ -10,7 +10,7 @@ public class Customer extends User {
     private Membership membership;
     private ArrayList<Book> rentedBooks;
     private ArrayList<Book> purchasedBooks;
-    private ArrayList<Review> reviews;
+    private Set<Review> reviews;
     private Map<String, Double> profileVector;
     private LibraryManager libraryManager = LibraryManager.getInstance();
 
@@ -20,7 +20,7 @@ public class Customer extends User {
         this.membership = new Membership();
         this.rentedBooks = new ArrayList<>();
         this.purchasedBooks = new ArrayList<>();
-        this.reviews = new ArrayList<>();
+        this.reviews = new HashSet<>();
     }
 
     // Getters
@@ -36,8 +36,8 @@ public class Customer extends User {
         return purchasedBooks;
     }
 
-    public ArrayList<Review> getReviews() {
-        return reviews;
+    public Set<Review> getReviews() {
+    	return Collections.unmodifiableSet(reviews);
     }
 
     public Map<String, Double> getProfileVector() {
