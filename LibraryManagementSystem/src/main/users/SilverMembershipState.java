@@ -30,6 +30,11 @@ public class SilverMembershipState extends MembershipState {
     public String getType() {
         return "SILVER";
     }
+
+    @Override
+    public MembershipState getPreviousState() {
+        return new BronzeMembershipState();
+    }
     
     @Override
     public MembershipState getNextState() {
@@ -39,11 +44,26 @@ public class SilverMembershipState extends MembershipState {
     @Override
     public void addXP(int points) {
         int totalXP = membership.getCurrentXP() + points;
-        System.out.println("Added " + points + " XP. Total XP: " + totalXP + "/" + getMaxXP());
-        handleXPOverflow(totalXP);
+        System.out.println("Added " + points + " XP. ");
         
-        if (membership.getState() instanceof SilverMembershipState) {
-            membership.setCurrentXP(totalXP);
+        if (totalXP >= getMaxXP()) {
+        	handleXPOverflow(totalXP, this);
+        } else {
+        	membership.setCurrentXP(totalXP);
+        	System.out.print("Current XP: " + membership.getCurrentXP() + "/" + getMaxXP() + ".");
+        }
+    }
+
+    @Override
+    public void deductXP(int points) {
+        int totalXP = membership.getCurrentXP() - points;
+        System.out.print("Deducted " + points + " XP. ");
+        
+        if (totalXP < 0) {
+        	handleXPUnderflow(totalXP, this);
+        } else {
+        	membership.setCurrentXP(totalXP);
+        	System.out.println("Current XP: " + membership.getCurrentXP() + "/" + getMaxXP() + ".");
         }
     }
 }

@@ -146,7 +146,7 @@ public class Book {
 
     // Display book details
     public String getDisplayText() {
-        return title + " by " + author + " ISBN: " + isbn + " Publisher: " + publisher + " Publication Date: " + publicationDate + " Price: $" + bookPrice;
+        return title + " by " + author + ". Price: $" + bookPrice;
     }
 
     // Methods to show available copies

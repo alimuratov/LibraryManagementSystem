@@ -30,6 +30,11 @@ public class BronzeMembershipState extends MembershipState {
     public String getType() {
         return "BRONZE";
     }
+
+    @Override
+    public MembershipState getPreviousState() {
+        return null; 
+    }
     
     @Override
     public MembershipState getNextState() {
@@ -39,11 +44,27 @@ public class BronzeMembershipState extends MembershipState {
     @Override
     public void addXP(int points) {
         int totalXP = membership.getCurrentXP() + points;
-        System.out.println("Added " + points + " XP. Total XP: " + totalXP + "/" + getMaxXP());
-        handleXPOverflow(totalXP);
+        System.out.print("Added " + points + " XP. ");
         
-        if (membership.getState() instanceof BronzeMembershipState) { 
-            membership.setCurrentXP(totalXP);
+        if (totalXP >= getMaxXP()) {
+        	handleXPOverflow(totalXP, this);
+        } else {
+        	membership.setCurrentXP(totalXP);
+        	System.out.println("Current XP: " + membership.getCurrentXP() + "/" + getMaxXP() + ".");
+        }
+    }
+
+    @Override
+    public void deductXP(int points) {
+        int totalXP = membership.getCurrentXP() - points;
+        System.out.print("Deducted " + points + " XP. ");
+        
+        if (totalXP < 0) {
+        	membership.setCurrentXP(0);
+        	System.out.println("Already at minimal membership level (BRONZE) with 0 XP.");
+        } else {
+        	membership.setCurrentXP(totalXP);
+        	System.out.println("Current XP: " + membership.getCurrentXP() + "/" + getMaxXP() + ".");
         }
     }
 }

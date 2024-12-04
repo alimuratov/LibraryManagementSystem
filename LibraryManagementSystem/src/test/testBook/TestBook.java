@@ -83,7 +83,7 @@ class TestBook {
         fullBook.setSaleableCopies(5);
         
         assertEquals("New Title", fullBook.getBookTitle());
-        assertEquals("New Title by New Author", fullBook.getDisplayText().split("ISBN")[0].trim());
+        assertEquals("New Title by New Author", fullBook.getDisplayText().split("\\. Price: \\$")[0].trim());
         assertEquals(10, fullBook.getRentableCopies());
         assertEquals(5, fullBook.getSaleableCopies());
     }
@@ -150,9 +150,6 @@ class TestBook {
         String displayText = fullBook.getDisplayText();
         assertTrue(displayText.contains("Test Book"));
         assertTrue(displayText.contains("Test Author"));
-        assertTrue(displayText.contains("123-4567890123"));
-        assertTrue(displayText.contains("Test Publisher"));
-        assertTrue(displayText.contains("2024-01-01"));
         assertTrue(displayText.contains("29.99"));
         
         assertEquals("5 rentable copies available", fullBook.showAvailableRentalCopies());

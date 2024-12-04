@@ -8,9 +8,9 @@ import main.book.Review;
 
 public class Customer extends User {
     private Membership membership;
-    private Set<Book> rentedBooks;
-    private Set<Book> purchasedBooks;
-    private Set<Review> reviews;
+    private ArrayList<Book> rentedBooks;
+    private ArrayList<Book> purchasedBooks;
+    private ArrayList<Review> reviews;
     private Map<String, Double> profileVector;
     private LibraryManager libraryManager = LibraryManager.getInstance();
 
@@ -18,9 +18,9 @@ public class Customer extends User {
     public Customer(String userName, Password password) {
         super(userName, password);
         this.membership = new Membership();
-        this.rentedBooks = new HashSet<>();
-        this.purchasedBooks = new HashSet<>();
-        this.reviews = new HashSet<>();
+        this.rentedBooks = new ArrayList<>();
+        this.purchasedBooks = new ArrayList<>();
+        this.reviews = new ArrayList<>();
     }
 
     // Getters
@@ -28,16 +28,16 @@ public class Customer extends User {
         return membership;
     }
 
-    public Set<Book> getRentedBooks() {
-        return Collections.unmodifiableSet(rentedBooks);
+    public ArrayList<Book> getRentedBooks() {
+        return rentedBooks;
     }
 
-    public Set<Book> getPurchasedBooks() {
-        return Collections.unmodifiableSet(purchasedBooks);
+    public ArrayList<Book> getPurchasedBooks() {
+        return purchasedBooks;
     }
 
-    public Set<Review> getReviews() {
-        return Collections.unmodifiableSet(reviews);
+    public ArrayList<Review> getReviews() {
+        return reviews;
     }
 
     public Map<String, Double> getProfileVector() {
@@ -79,6 +79,10 @@ public class Customer extends User {
     public void purchaseBook(Book book, String method) {
         libraryManager.purchaseBook(this, book, method);
     }
+
+    public void refundBook(Book book) {
+        libraryManager.refundBook(this, book);
+    }    
 
     // Review Methods
     public void addReview(Book book, Review review) {

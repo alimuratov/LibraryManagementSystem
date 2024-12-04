@@ -30,6 +30,11 @@ public class GoldMembershipState extends MembershipState {
     public String getType() {
         return "GOLD";
     }
+
+    @Override
+    public MembershipState getPreviousState() {
+        return new SilverMembershipState();
+    }
     
     @Override
     public MembershipState getNextState() {
@@ -39,5 +44,10 @@ public class GoldMembershipState extends MembershipState {
     @Override
     public void addXP(int points) {
         System.out.println("Already at maximum membership level (GOLD).");
+    }
+
+    @Override
+    public void deductXP(int points) {
+        handleXPUnderflow(-points, this);
     }
 }

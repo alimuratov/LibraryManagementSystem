@@ -3,6 +3,7 @@ package main.users;
 import java.time.LocalDate;
 import java.util.*;
 import main.book.Book;
+import main.book.PurchaseRecord;
 import main.book.RentalRecord;
 import main.transaction.PaymentFactory;
 import main.transaction.Transaction;
@@ -11,14 +12,12 @@ public class LibraryManager{
     private static LibraryManager instance = null;
 
     private final TreeMap<LocalDate, List<RentalRecord>> activeRentals;
-    // private Map<String, List<Book>> completedRentals;
-    // private Map<String, List<Book>> purchaseRecords;
+    private final TreeMap<LocalDate, List<PurchaseRecord>> refundablePurchases;
 
     // Constructor
     public LibraryManager() {
         activeRentals = new TreeMap<>();
-        // completedRentals = new HashMap<>();
-        // purchaseRecords = new HashMap<>();
+        refundablePurchases = new TreeMap<>(); 
     }
 
     // Singleton 
@@ -28,7 +27,16 @@ public class LibraryManager{
         }
         return instance;
     }
-
+    
+    // Getters
+    public TreeMap<LocalDate, List<RentalRecord>> getActiveRentals() {
+    	return activeRentals;
+    }
+    
+    public TreeMap<LocalDate, List<PurchaseRecord>> getRefundablePurchases() {
+    	return refundablePurchases;
+    }
+    
     // RENTING
 
     // Rent a book
@@ -171,16 +179,92 @@ public class LibraryManager{
             customer.addPurchasedBook(book);
             customer.getMembership().addXP(20);
 
-            // purchaseRecords.computeIfAbsent(customer.getUserID(), k -> new ArrayList<>()).add(book);
+            PurchaseRecord purchaseRecord = new PurchaseRecord(customer, book, transaction, method);
+            refundablePurchases.computeIfAbsent(purchaseRecord.getRefundExpiryDate(), k -> new ArrayList<>()).add(purchaseRecord);
 
             System.out.println("Book purchased successfully: " + book.getDisplayText());
-            System.out.printf("Discounted Price: HK$%.2f\n", discountedPrice);
+            if (book.getBookPrice() != discountedPrice) {
+            	System.out.printf("Discounted Price: HK$%.2f\n", discountedPrice);
+            }
 
             processSellingWaitlist(book, method);
         } else {
             book.addSellingWaitList(customer);
             System.out.println("Book is not available for purchase. You have been added to the waiting list: " + book.getDisplayText());
         }
+    }
+
+    public void refundBook(Customer customer, Book book) {
+        if (customer == null || book == null) {
+            System.out.println("Customer or Book cannot be null.");
+            return;
+        }
+
+        // Iterate through refundablePurchases to find the corresponding PurchaseRecord
+        boolean recordFound = false;
+        Iterator<Map.Entry<LocalDate, List<PurchaseRecord>>> iterator = refundablePurchases.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<LocalDate, List<PurchaseRecord>> entry = iterator.next();
+            List<PurchaseRecord> records = entry.getValue();
+
+            Iterator<PurchaseRecord> recordIterator = records.iterator();
+            while (recordIterator.hasNext()) {
+                PurchaseRecord record = recordIterator.next();
+                if (record.getCustomer().equals(customer) && record.getBook().equals(book) && !record.isRefunded()) {
+                    // Check if within 7 days from purchase date
+                    if (LocalDate.now().isAfter(record.getRefundExpiryDate())) {
+                        System.out.println("Refund period has expired for this purchase.");
+                        return;
+                    }
+
+                    // Process refund
+                    record.getTransaction().processRefund();
+                    record.markAsRefunded();
+
+                    recordIterator.remove();
+                    if (records.isEmpty()) {
+                        iterator.remove();
+                    }
+
+                    book.setSaleableCopies(book.getSaleableCopies() + 1);
+                    customer.removePurchasedBook(book);
+                    customer.getMembership().deductXP(20);
+
+                    System.out.println("Book refunded successfully: " + book.getDisplayText());
+                    processSellingWaitlist(book, record.getRefundMethod());
+
+                    recordFound = true;
+                    break;
+                }
+            }
+
+            if (recordFound) {
+                break;
+            }
+        }
+
+        if (!recordFound) {
+            System.out.println("This book is not in your purchased list or refund period has expired: " + book.getDisplayText());
+        }
+    }
+
+    public void processRefunds(LocalDate currentDate) {
+        NavigableMap<LocalDate, List<PurchaseRecord>> expiredRefunds = refundablePurchases.headMap(currentDate, true);
+
+        for (Map.Entry<LocalDate, List<PurchaseRecord>> entry : expiredRefunds.entrySet()) {
+            List<PurchaseRecord> records = entry.getValue();
+
+            for (PurchaseRecord record : records) {
+                if (!record.isRefunded()) {
+                    // Refund period has expired; cannot refund anymore
+                    System.out.println("Refund period expired for purchase: " + record.getBook().getDisplayText()
+                            + " by " + record.getCustomer().getUserName());
+                }
+            }
+        }
+
+        expiredRefunds.clear();
     }
 
     // Process selling waitlist

@@ -13,15 +13,29 @@ public class Membership {
     
     // State management
     public void setState(MembershipState newState, int startingXP) {
+    	String previousStateType = state.getType();
         this.state = newState;
         this.state.setMembership(this);
         this.currentXP = startingXP;
         
-        // Only print XP message if not Gold state
-        if (!(newState instanceof GoldMembershipState)) {
-            System.out.println("Membership upgraded to " + state.getType() + ". Starting with XP: " + currentXP + "/" + state.getMaxXP());
+        MembershipState prevState = newState.getPreviousState();
+        MembershipState nextState = newState.getNextState();
+        
+        // Upgrade from Bronze to Silver or Silver to Gold
+        if (prevState != null && prevState.getType().equals(previousStateType)) {
+            System.out.println("Membership upgraded to " + state.getType() + ". Starting with XP: " + currentXP + "/" + state.getMaxXP() + ".");	
+        } 
+        
+        // Downgrade from Gold to Silver or Silver to Bronze
+        else if (nextState != null && nextState.getType().equals(previousStateType)) {
+            System.out.println("Membership downgraded to " + state.getType() + ". Starting with XP: " + currentXP + "/" + state.getMaxXP() + ".");
+        }
+
+        // Upgrade from Bronze to Gold and Downgrade from Gold to Bronze instantly
+        else if (nextState == null) {
+            System.out.println("Membership upgraded to " + state.getType() + ". Current XP: " + currentXP + "/" + state.getMaxXP() + ".");
         } else {
-            System.out.println("Membership upgraded to " + state.getType() + ".");
+        	System.out.println("Membership downgraded to " + state.getType() + ". Current XP: " + currentXP + "/" + state.getMaxXP() + ".");
         }
     }
     
@@ -53,6 +67,10 @@ public class Membership {
     // XP management
     public void addXP(int points) {
         state.addXP(points);
+    }
+
+    public void deductXP(int points) {
+        state.deductXP(points);
     }
     
     public int getCurrentXP() {
