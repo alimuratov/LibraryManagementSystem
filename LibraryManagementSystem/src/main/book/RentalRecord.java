@@ -10,7 +10,6 @@ public class RentalRecord {
     private final Book book;
     private final LocalDate rentalDate; 
     private final LocalDate returnDate; 
-    private boolean isReturned;
 
     public RentalRecord(Customer customer, Book book) {
         if (customer == null || book == null) {
@@ -20,7 +19,6 @@ public class RentalRecord {
         this.book = book;
         this.rentalDate = LocalDate.now(); 
         this.returnDate = rentalDate.plusDays(customer.getMembership().getRentalDays()); 
-        this.isReturned = false;
     }
 
     public Customer getCustomer() {
@@ -38,15 +36,7 @@ public class RentalRecord {
     public LocalDate getReturnDate() {
         return returnDate;
     }
-
-    public boolean isReturned() {
-        return isReturned;
-    }
-
-    public void markAsReturned() {
-        this.isReturned = true;
-    }
-
+    
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

@@ -81,11 +81,6 @@ class TestRentalRecord {
         assertEquals(bronzeCustomer, bronzeRecord.getCustomer());
         assertEquals(book, bronzeRecord.getBook());
         assertEquals(LocalDate.now(), bronzeRecord.getRentalDate());
-        assertFalse(bronzeRecord.isReturned());
-        
-        // Test return status management
-        bronzeRecord.markAsReturned();
-        assertTrue(bronzeRecord.isReturned());
     }
     
     @Test

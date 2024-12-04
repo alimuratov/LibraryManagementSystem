@@ -51,14 +51,6 @@ public class TestPurchaseRecord {
         assertEquals(LocalDate.now().plusDays(7), purchaseRecord.getRefundExpiryDate());
         assertEquals(transaction, purchaseRecord.getTransaction());
         assertEquals(refundMethod, purchaseRecord.getRefundMethod());
-        assertFalse(purchaseRecord.isRefunded());
-    }
-
-    @Test
-    public void testMarkAsRefunded() {
-        assertFalse(purchaseRecord.isRefunded());
-        purchaseRecord.markAsRefunded();
-        assertTrue(purchaseRecord.isRefunded());
     }
 
     @Test
@@ -68,7 +60,6 @@ public class TestPurchaseRecord {
                           ", Book =" + book.getBookTitle() +
                           ", Purchase Date =" + LocalDate.now().format(formatter) +
                           ", Refund Expiry Date =" + LocalDate.now().plusDays(7).format(formatter) +
-                          ", Is Refunded =" + purchaseRecord.isRefunded() +
                           '}';
         assertEquals(expected, purchaseRecord.toString(), "toString method should return the correct string representation.");
     }

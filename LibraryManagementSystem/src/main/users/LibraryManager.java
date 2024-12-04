@@ -86,16 +86,13 @@ public class LibraryManager{
             Iterator<RentalRecord> recordIterator = records.iterator();
             while (recordIterator.hasNext()) {
                 RentalRecord record = recordIterator.next();
-                if (record.getCustomer().equals(customer) && record.getBook().equals(book) && !record.isReturned()) {
-                    record.markAsReturned();
+                if (record.getCustomer().equals(customer) && record.getBook().equals(book)) {
                     customer.getMembership().addXP(10);
 
                     recordIterator.remove();
                     if (records.isEmpty()) {
                         iterator.remove();
                     }
-
-                    // completedRentals.computeIfAbsent(customer.getUserID(), k -> new ArrayList<>()).add(record);
 
                     book.setRentableCopies(book.getRentableCopies() + 1);
 
@@ -127,10 +124,6 @@ public class LibraryManager{
         }
 
         for (RentalRecord record : recordsToReturn) {
-            record.markAsReturned();
-
-            // completedRentals.computeIfAbsent(record.getCustomer().getUserID(), k -> new ArrayList<>()).add(record);
-
             Book book = record.getBook();
             Customer customer = record.getCustomer();
             
@@ -186,8 +179,7 @@ public class LibraryManager{
             if (book.getBookPrice() != discountedPrice) {
             	System.out.printf("Discounted Price: HK$%.2f\n", discountedPrice);
             }
-
-            processSellingWaitlist(book, method);
+            
         } else {
             book.addSellingWaitList(customer);
             System.out.println("Book is not available for purchase. You have been added to the waiting list: " + book.getDisplayText());
@@ -211,7 +203,7 @@ public class LibraryManager{
             Iterator<PurchaseRecord> recordIterator = records.iterator();
             while (recordIterator.hasNext()) {
                 PurchaseRecord record = recordIterator.next();
-                if (record.getCustomer().equals(customer) && record.getBook().equals(book) && !record.isRefunded()) {
+                if (record.getCustomer().equals(customer) && record.getBook().equals(book)) {
                     // Check if within 7 days from purchase date
                     if (LocalDate.now().isAfter(record.getRefundExpiryDate())) {
                         System.out.println("Refund period has expired for this purchase.");
@@ -220,7 +212,6 @@ public class LibraryManager{
 
                     // Process refund
                     record.getTransaction().processRefund();
-                    record.markAsRefunded();
 
                     recordIterator.remove();
                     if (records.isEmpty()) {
@@ -256,11 +247,9 @@ public class LibraryManager{
             List<PurchaseRecord> records = entry.getValue();
 
             for (PurchaseRecord record : records) {
-                if (!record.isRefunded()) {
-                    // Refund period has expired; cannot refund anymore
-                    System.out.println("Refund period expired for purchase: " + record.getBook().getDisplayText()
-                            + " by " + record.getCustomer().getUserName());
-                }
+                System.out.println("Refund period expired for purchase: " + record.getBook().getDisplayText()
+                        + " by " + record.getCustomer().getUserName());
+                processSellingWaitlist(record.getBook(), record.getRefundMethod());
             }
         }
 

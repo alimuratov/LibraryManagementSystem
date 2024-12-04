@@ -12,7 +12,6 @@ public class PurchaseRecord {
     private final LocalDate refundExpiryDate;
     private final Transaction transaction;
     private final String refundMethod;
-    private boolean isRefunded;
 
     public PurchaseRecord(Customer customer, Book book, Transaction transaction, String refundMethod) {
         if (customer == null || book == null || refundMethod == null) {
@@ -24,7 +23,6 @@ public class PurchaseRecord {
         this.refundExpiryDate = purchaseDate.plusDays(7);
         this.transaction = transaction;
         this.refundMethod = refundMethod;
-        this.isRefunded = false;
     }
 
     public Customer getCustomer() {
@@ -51,14 +49,6 @@ public class PurchaseRecord {
         return transaction;
     }
 
-    public boolean isRefunded() {
-        return isRefunded;
-    }
-
-    public void markAsRefunded() {
-        this.isRefunded = true;
-    }
-
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -67,7 +57,6 @@ public class PurchaseRecord {
                 ", Book =" + book.getBookTitle() +
                 ", Purchase Date =" + purchaseDate.format(formatter) +
                 ", Refund Expiry Date =" + refundExpiryDate.format(formatter) +
-                ", Is Refunded =" + isRefunded +
                 '}';
     }
 }

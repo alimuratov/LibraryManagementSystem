@@ -194,41 +194,6 @@ public class LibraryManagerTest {
         // Optionally, you can check if the entry has been removed after processing
         assertFalse(activeRentals.containsKey(dateWithEmptyRecords));
     }
-    
-    @Test
-    public void testReturnBookAlreadyReturnedRecordStillInActiveRentals() throws Exception {
-        libraryManager.rentBook(customer, book);
-
-        TreeMap<LocalDate, List<RentalRecord>> activeRentals = libraryManager.getActiveRentals();
-
-        RentalRecord rentalRecord = null;
-        for (List<RentalRecord> records : activeRentals.values()) {
-            for (RentalRecord record : records) {
-                if (record.getCustomer().equals(customer) && record.getBook().equals(book)) {
-                    rentalRecord = record;
-                    break;
-                }
-            }
-            if (rentalRecord != null) {
-                break;
-            }
-        }
-
-        assertNotNull(rentalRecord);
-        rentalRecord.markAsReturned();
-
-        customer.removeRentedBook(book);
-        book.setRentableCopies(book.getRentableCopies() + 1);
-
-        libraryManager.returnBook(customer, book);
-
-
-        assertFalse(customer.getRentedBooks().contains(book));
-        assertEquals(1, book.getRentableCopies());
-    }
-    
-    
-
 
     @Test
     public void testRefundBookNullValues() {
@@ -380,89 +345,6 @@ public class LibraryManagerTest {
         assertFalse(customer2.getPurchasedBooks().contains(book));
         assertFalse(customer2.getPurchasedBooks().contains(book2));
     }
-
-    /**
-     * Test refundBook when purchase record exists but is already refunded by another method.
-     */
-    @Test
-    public void testRefundBookAlreadyRefundedByAnotherMethod() throws Exception {
-        libraryManager.purchaseBook(customer, book, "CreditCard");
-
-
-        TreeMap<LocalDate, List<PurchaseRecord>> refundablePurchases = libraryManager.getRefundablePurchases();
-
-        LocalDate refundExpiryDate = LocalDate.now().plusDays(7);
-        List<PurchaseRecord> records = refundablePurchases.get(refundExpiryDate);
-        assertNotNull(records);
-        assertFalse(records.isEmpty());
-
-        PurchaseRecord record = records.get(0);
-        // Manually mark as refunded
-        record.markAsRefunded();
-
-        // Attempt to refund again
-        libraryManager.refundBook(customer, book);
-
-        // Assertions
-        
-        assertTrue(customer.getPurchasedBooks().contains(book));
-        // The record should have been removed after refund
-        assertTrue(records.contains(record));
-    }
-    
-    /**
-     * Test refundBook when processing refunds for already refunded records in processRefunds.
-     */
-    @Test
-    public void testProcessRefundsAlreadyRefunded() throws Exception {
-        // Simulate purchasing a book
-        libraryManager.purchaseBook(customer, book, "CreditCard");
-
-        TreeMap<LocalDate, List<PurchaseRecord>> refundablePurchases = libraryManager.getRefundablePurchases();
-
-        // Assume purchase date was 8 days ago to expire the refund period (7 days)
-        LocalDate purchaseDate = LocalDate.now().minusDays(8);
-        LocalDate refundExpiryDate = purchaseDate.plusDays(7);
-
-        // Manually set the purchaseRecord's purchaseDate and refundExpiryDate
-        List<PurchaseRecord> records = refundablePurchases.getOrDefault(refundExpiryDate, new ArrayList<>());
-        PurchaseRecord expiredRecord = null;
-        for (PurchaseRecord pr : records) {
-            if (pr.getCustomer().equals(customer) && pr.getBook().equals(book)) {
-                expiredRecord = pr;
-                break;
-            }
-        }
-        
-        if (expiredRecord == null) {
-            // Create a new expired PurchaseRecord
-            Transaction transaction = new Transaction("txn-expired-already-refunded", 100.0, new main.transaction.CreditCardPayment(), new main.transaction.CreditCardRefund());
-            expiredRecord = new PurchaseRecord(customer, book, transaction, "CreditCard");
-            // Normally, the constructor sets the purchaseDate to now, so we need to adjust it
-            Field purchaseDateField = PurchaseRecord.class.getDeclaredField("purchaseDate");
-            purchaseDateField.setAccessible(true);
-            purchaseDateField.set(expiredRecord, purchaseDate);
-
-            Field refundExpiryDateField = PurchaseRecord.class.getDeclaredField("refundExpiryDate");
-            refundExpiryDateField.setAccessible(true);
-            refundExpiryDateField.set(expiredRecord, refundExpiryDate);
-
-            // Mark the record as already refunded
-            expiredRecord.markAsRefunded();
-
-            records.add(expiredRecord);
-            refundablePurchases.put(refundExpiryDate, records);
-        }
-
-        // Process refunds with currentDate after the refundExpiryDate
-        LocalDate currentDate = refundExpiryDate.plusDays(1);
-        libraryManager.processRefunds(currentDate);
-
-        // Assertions
-        // The expired refund should have been processed (logged) and removed from refundablePurchases
-        assertFalse(refundablePurchases.containsKey(refundExpiryDate));
-    }
-
 
     @Test
     public void testRefundBookCustomerEqualsFalse() throws Exception {
