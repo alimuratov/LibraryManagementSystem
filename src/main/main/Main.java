@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Main {
 	private static boolean isRunning = true;
@@ -26,6 +28,7 @@ public class Main {
 	private static Admin admin = Admin.getInstance();
 	private static RecommendationService service;
 	private static Data data;
+	private static LibraryManager manager = LibraryManager.getInstance();
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
@@ -177,11 +180,11 @@ public class Main {
 		while (true) {
 			System.out.println("Admin Menu");
 			System.out.println("###############################################");
-			System.out.println("Enter 1 to Add a Book | Enter 2 to Remove a Book | Enter 0 to Exit");
+			System.out.println("Enter 1 to Add a Book | Enter 2 to Remove a Book | Enter 3 to Process Returns | Enter 4 to Process Refunds | Enter 0 to Exit");
 			System.out.print("Input: ");
 
 			int choice = -1;
-			while (choice < 0 || choice > 2) {
+			while (choice < 0 || choice > 4) {
 				try {
 					String strChoice = scanner.nextLine();
 					choice = Integer.parseInt(strChoice);
@@ -192,6 +195,12 @@ public class Main {
 						break;
 					case 2:
 						removeBook(scanner);
+						break;
+					case 3:
+						processReturns(scanner);
+						break;
+					case 4:
+						processRefunds(scanner);
 						break;
 					case 0:
 						System.out.println("Logging out...");
@@ -205,6 +214,48 @@ public class Main {
 			}
 		}
 	}
+	
+	private static void processReturns(Scanner scanner) {
+	    System.out.print("Enter Publication Date (YYYY-MM-DD): ");
+	    String publicationDate = scanner.nextLine().trim();
+	    LocalDate localDate = null;
+
+	    try {
+	        localDate = LocalDate.parse(publicationDate);
+	        System.out.println("Converted LocalDate: " + localDate);
+	    } catch (DateTimeParseException e) {
+	        System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+	    }
+
+	    if (localDate != null) {
+	        manager.processReturns(localDate);
+	        System.out.println("\nReturns processed!");
+	    } else {
+	        System.out.println("\nReturns not processed due to invalid date.");
+	    }
+	}
+	
+	private static void processRefunds(Scanner scanner) {
+	    System.out.print("Enter Publication Date (YYYY-MM-DD): ");
+	    String publicationDate = scanner.nextLine().trim();
+	    LocalDate localDate = null;
+
+	    try {
+	        localDate = LocalDate.parse(publicationDate);
+	        System.out.println("Converted LocalDate: " + localDate);
+	    } catch (DateTimeParseException e) {
+	        System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+	    }
+
+	    if (localDate != null) {
+	        manager.processReturns(localDate);
+	        System.out.println("\nRefunds processed!");
+	    } else {
+	        System.out.println("\nRefunds not processed due to invalid date.");
+	    }
+	}
+	
+	
 
 	private static void addBook(Scanner scanner) {
 		System.out.print("Enter ISBN: ");
@@ -320,11 +371,11 @@ public class Main {
 			System.out.println("Main Menu");
 			System.out.println("###############################################");
 			System.out.println(
-					"Enter 1 to Rent a Book | Enter 2 to Purchase a Book | Enter 3 to Return a Book | Enter 4 to Get Book Recommendations | \nEnter 5 to Rate a Book | Enter 6 to Search for a Book | Enter 0 to Exit");
+					"Enter 1 to Rent a Book | Enter 2 to Purchase a Book | Enter 3 to Return a Book | Enter 4 to Get Book Recommendations | \nEnter 5 to Rate a Book | Enter 6 to Search for a Book | Enter 7 to Refund a Book | Enter 0 to Exit");
 			System.out.print("Input: ");
 
 			int choice = -1;
-			while (choice < 0 || choice > 6) {
+			while (choice < 0 || choice > 7) {
 				try {
 					String strChoice = scanner.nextLine();
 					choice = Integer.parseInt(strChoice);
@@ -348,6 +399,9 @@ public class Main {
 					case 6:
 						searchBook(scanner);
 						break;
+					case 7:
+						refundBook(scanner);
+						break;
 					case 0:
 						System.out.println("Logging out...");
 						return;
@@ -361,6 +415,39 @@ public class Main {
 				}
 			}
 		}
+	}
+	
+	private static void refundBook(Scanner scanner) {
+	    List<Book> purchasedBooks = new ArrayList<>(customer.getPurchasedBooks());
+
+	    if (purchasedBooks.isEmpty()) {
+	        System.out.println("No books are currently available for refund.");
+	        return;
+	    }
+
+	    System.out.println("Books:");
+	    for (int i = 0; i < purchasedBooks.size(); i++) {
+	        Book book = purchasedBooks.get(i);
+	        System.out.println((i) + ". " + book.getBookTitle());
+	    }
+
+	    System.out.print("Enter the number of the book you want to refund: ");
+	    int bookChoice = -1;
+
+	    while (bookChoice < 0 || bookChoice >= purchasedBooks.size()) { 
+	        try {
+	            String strBookChoice = scanner.nextLine();
+	            bookChoice = Integer.parseInt(strBookChoice);
+	            if (bookChoice < 0 || bookChoice >= purchasedBooks.size()) {
+	                System.out.println("Invalid selection. Please choose a valid book number.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.print("Input is not a number. Try again.\nInput: ");
+	        }
+	    }
+
+	    Book selectedBook = purchasedBooks.get(bookChoice);
+	    customer.refundBook(selectedBook); 
 	}
 
 	private static void requestBookRent(Scanner scanner) {
