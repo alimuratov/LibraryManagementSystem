@@ -109,7 +109,7 @@ public class RecommendationServiceTest {
         
         Exception exception = assertThrows(UnsupportedOperationException.class, () -> {
             service.setStrategy("unknown", data);
-        });
+        });	
         
         assertEquals("Unknown strategy type", exception.getMessage());
 	}

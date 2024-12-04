@@ -23,7 +23,7 @@ public class RecommendationStrategyBaseTest {
 	@Test
 	void testSetter() {
 		Data data1 = new Data();
-		RecommendationStrategyBase recommendationSystem = new ContentFiltering(data1);
+		RecommendationStrategyBase recommendationSystem = new CollaborativeFiltering(data1);
 		
 		Data data2 = new Data();
 		data2.setBooks(Arrays.asList(new Book("book1", "description1")));

@@ -159,7 +159,7 @@ public class ContentFilteringTest {
 	    Map<String, Double> expectedIdfDict = new HashMap<>();
 	    expectedIdfDict.put("silent", 2.0 / 1); 
 	    expectedIdfDict.put("night", 2.0 / 1); 
-	    assertEquals(expectedIdfDict, contentFiltering.getIdfDict(), "IDF dictionary does not match.");
+	    assertEquals(expectedIdfDict, contentFiltering.getIdfDict());
 	}
 	@Test
 	void testCreateTfIdfSeparately_OnlyPunctuation() {

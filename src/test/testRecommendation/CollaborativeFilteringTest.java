@@ -27,11 +27,6 @@ public class CollaborativeFilteringTest {
 	
 	protected static List<Book> books;
 	
-	@BeforeEach
-	void setup() {
-			
-	}
-	
 	@Test
 	void testCalculateDifferences_emptyUserRatings() {
 		Data data = new Data();
