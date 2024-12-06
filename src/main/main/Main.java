@@ -248,7 +248,7 @@ public class Main {
 	    }
 
 	    if (localDate != null) {
-	        manager.processReturns(localDate);
+	        manager.processRefunds(localDate);
 	        System.out.println("\nRefunds processed!");
 	    } else {
 	        System.out.println("\nRefunds not processed due to invalid date.");
@@ -687,7 +687,6 @@ public class Main {
 	    username = null;
 	    parole = null;
 	    password = null;
-	    customer = null;
 	    authenticationService = AuthenticationService.getInstance();
 	    admin = Admin.getInstance();
 	    service = null;
