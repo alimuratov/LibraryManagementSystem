@@ -8,8 +8,8 @@ import main.book.Review;
 
 public class Customer extends User {
     private Membership membership;
-    private Set<Book> rentedBooks;
-    private Set<Book> purchasedBooks;
+    private ArrayList<Book> rentedBooks;
+    private ArrayList<Book> purchasedBooks;
     private Set<Review> reviews;
     private Map<String, Double> profileVector;
     private LibraryManager libraryManager = LibraryManager.getInstance();
@@ -18,24 +18,24 @@ public class Customer extends User {
     public Customer(String userName, Password password) {
         super(userName, password);
         this.membership = new Membership();
-        this.rentedBooks = new HashSet<>();
-        this.purchasedBooks = new HashSet<>();
+        this.rentedBooks = new ArrayList<>();
+        this.purchasedBooks = new ArrayList<>();
         this.reviews = new HashSet<>();
     }
     
     public Customer(String userName) {
         super(userName, new Password("defaultPassword"));
         this.membership = new Membership();
-        this.rentedBooks = new HashSet<>();
-        this.purchasedBooks = new HashSet<>();
+        this.rentedBooks = new ArrayList<>();
+        this.purchasedBooks = new ArrayList<>();
         this.reviews = new HashSet<>();
     }
 
     public Customer(String userName, Integer id) {
         super(userName, id);
         this.membership = new Membership();
-        this.rentedBooks = new HashSet<>();
-        this.purchasedBooks = new HashSet<>();
+        this.rentedBooks = new ArrayList<>();
+        this.purchasedBooks = new ArrayList<>();
         this.reviews = new HashSet<>();
     }
 
@@ -45,12 +45,12 @@ public class Customer extends User {
         return membership;
     }
 
-    public Set<Book> getRentedBooks() {
-        return Collections.unmodifiableSet(rentedBooks);
+    public ArrayList<Book> getRentedBooks() {
+        return rentedBooks;
     }
 
-    public Set<Book> getPurchasedBooks() {
-        return Collections.unmodifiableSet(purchasedBooks);
+    public ArrayList<Book> getPurchasedBooks() {
+        return purchasedBooks;
     }
 
     public Set<Review> getReviews() {
