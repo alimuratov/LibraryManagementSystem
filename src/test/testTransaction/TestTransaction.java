@@ -40,11 +40,13 @@ public class TestTransaction {
         assertEquals(transaction.getIsPaymentRefunded(), true);
         assertEquals(Transaction.getNewTransactionID(), Integer.toString(Integer.parseInt(transactionID) + 1));
         String result = String.format("Processing credit card payment of: HK$%.2f.\n" +
-                "Transaction ID: %s was processed successfully.\n" +
+                "Transaction was processed successfully.\n" +
                 "Processing credit card refund of: HK$%.2f.\n" +
-                "Transaction ID: %s was refunded successfully.\n",
-                amount, transactionID, amount, transactionID);
-        assertEquals(result, getOutput());
+                "Transaction was refunded successfully.\n",
+                amount, amount);
+        String output = getOutput();
+        System.out.println(output);
+        assertEquals(result, output);
     }
     
     @Test
@@ -59,10 +61,10 @@ public class TestTransaction {
 		transaction.processRefund();
 
 		String result = String.format("Processing WeChat payment of: HK$%.2f.\n" + 
-				"Transaction ID: %s was processed successfully.\n" + 
+				"Transaction was processed successfully.\n" + 
 				"Processing WeChat refund of: HK$%.2f.\n" + 
-				"Transaction ID: %s was refunded successfully.\n",
-				amount, transactionID, amount, transactionID);
+				"Transaction was refunded successfully.\n",
+				amount, amount);
 		assertEquals(result, getOutput());
 	}
     
@@ -79,11 +81,11 @@ public class TestTransaction {
 		transaction.processRefund();
 
 		String result = String.format("Processing WeChat payment of: HK$%.2f.\n" +
-                "Transaction ID: %s was processed successfully.\n" +
+                "Transaction was processed successfully.\n" +
                 "Processing WeChat refund of: HK$%.2f.\n" +
-                "Transaction ID: %s was refunded successfully.\n" +
+                "Transaction was refunded successfully.\n" +
                 "Payment has already been refunded.\n",
-                amount, transactionID, amount, transactionID);
+                amount, amount);
         assertEquals(result, getOutput());
     }
     
