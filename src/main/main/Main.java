@@ -531,7 +531,7 @@ public class Main {
 	}
 
 	private static void returnBook(Scanner scanner) {
-		Set<Book> rentedBooks = customer.getRentedBooks();
+		ArrayList<Book> rentedBooks = customer.getRentedBooks();
 
 		if (rentedBooks.isEmpty()) {
 			System.out.println("No books to return.");
