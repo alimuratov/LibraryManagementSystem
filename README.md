@@ -13,6 +13,8 @@ Library Management System (LMS) is a Java-based application designed to help man
 
 ## Prerequisites
 
+- Latest version is on https://github.com/alimuratov/LibraryManagementSystem/tree/release_v3.2
+- Final branch: release_v3.2
 - JDK 21 or higher
 - Java Runtime Environment (JRE) to run the application
 
