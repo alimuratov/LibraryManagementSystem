@@ -24,7 +24,7 @@ public class Transaction {
 		paymentMethod.processPayment(amount);
 		transactions.put(transactionID, true);
 		isPaymentProcessed = true;
-        System.out.printf("Transaction ID: %s was processed successfully.\n", transactionID);
+        System.out.printf("Transaction was processed successfully.\n", transactionID);
 	}
 
 	public void processRefund() {
@@ -32,7 +32,7 @@ public class Transaction {
 			refundMethod.processRefund(amount);
             transactions.put(transactionID, false);
 			isPaymentRefunded = true;
-	        System.out.printf("Transaction ID: %s was refunded successfully.\n", transactionID);
+	        System.out.printf("Transaction was refunded successfully.\n", transactionID);
 		} 
 		else if (isPaymentRefunded) {
             System.out.printf("Payment has already been refunded.\n");
