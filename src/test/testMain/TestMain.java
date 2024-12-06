@@ -219,6 +219,20 @@ class TestMain {
         		+ "Welcome to Library+\n"
         		+ "###############################################\n"
         		+ "Enter 1 to Register | Enter 2 to Log In | Enter 0 to Close\n"
+        		+ "Input: Enter your username: Enter your password: Admin Menu\n"
+        		+ "###############################################\n"
+        		+ "Enter 1 to Add a Book | Enter 2 to Remove a Book | Enter 3 to Process Returns | Enter 4 to Process Refunds | Enter 0 to Exit\n"
+        		+ "Input: Enter Publication Date (YYYY-MM-DD): Converted LocalDate: 2024-12-06\n"
+        		+ "No rentals to return up to 2024-12-06\n"
+        		+ "\n"
+        		+ "Returns processed!\n"
+        		+ "Admin Menu\n"
+        		+ "###############################################\n"
+        		+ "Enter 1 to Add a Book | Enter 2 to Remove a Book | Enter 3 to Process Returns | Enter 4 to Process Refunds | Enter 0 to Exit\n"
+        		+ "Input: Logging out...\n"
+        		+ "Welcome to Library+\n"
+        		+ "###############################################\n"
+        		+ "Enter 1 to Register | Enter 2 to Log In | Enter 0 to Close\n"
         		+ "Input: Thank you for using our service! Have a good day!\n";
 
         String actualOutput = outContent.toString();
