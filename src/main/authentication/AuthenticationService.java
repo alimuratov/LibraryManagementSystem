@@ -6,7 +6,7 @@ import main.users.*;
 
 public class AuthenticationService{
     private static Admin admin = Admin.getInstance();
-    private static ArrayList<User> users; // librarians and regular customers have the same login type
+    private static ArrayList<User> users; 
     private static SessionManager sessionManager = SessionManager.getInstance();
 
     public static AuthenticationService instance = new AuthenticationService();
